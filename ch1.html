@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أكاديمية التدريس | مدخل للمفاهيم والكفايات</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        os_bg: '#0f172a',       
+                        os_card: '#1e293b',     
+                        c_intro: '#8b5cf6',     // بنفسجي (المفاهيم)
+                        c_tasks: '#10b981',     // أخضر (مثلث الأداء)
+                        c_time: '#f59e0b',      // عنبري (المنظومة)
+                        c_sys: '#0ea5e9',       // سماوي (الأدوار والكفايات)
+                        c_exam: '#ef4444',      // أحمر (الامتحانات)
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.05), transparent 25%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+
+        .glass-header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .view-section { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-item.active { transform: translateY(-5px); }
+        .nav-item.active[data-color="intro"] { color: #8b5cf6; }
+        .nav-item.active[data-color="tasks"] { color: #10b981; }
+        .nav-item.active[data-color="time"] { color: #f59e0b; }
+        .nav-item.active[data-color="sys"] { color: #0ea5e9; }
+        .nav-item.active[data-color="exam"] { color: #ef4444; }
+
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%;
+        }
+        .nav-item.active[data-color="intro"]::after { background: #8b5cf6; }
+        .nav-item.active[data-color="tasks"]::after { background: #10b981; }
+        .nav-item.active[data-color="time"]::after { background: #f59e0b; }
+        .nav-item.active[data-color="sys"]::after { background: #0ea5e9; }
+        .nav-item.active[data-color="exam"]::after { background: #ef4444; }
+
+        .badge { font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        
+        @keyframes floatUpXP { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.4); } }
+        .xp-popup { position: fixed; font-weight: 900; font-size: 1.5rem; pointer-events: none; z-index: 9999; animation: floatUpXP 1.2s ease-out forwards; text-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-header px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border-2 border-white/20 rounded-xl flex items-center justify-center font-space font-black text-white shadow-lg bg-gradient-to-br from-c_intro to-c_sys">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-white text-sm md:text-base tracking-wide">أكاديمية المعلم | الفصل 1</h1>
+                    <div class="w-32 h-1.5 bg-os_card rounded-full mt-1 overflow-hidden">
+                        <div id="xpBar" class="h-full bg-gradient-to-r from-c_intro to-c_sys transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-os_card border border-white/10 px-3 py-1.5 rounded-full text-xs font-space font-bold tracking-wider flex items-center gap-2 text-white shadow-sm cursor-pointer" onclick="addXP(5, 'شغف التعلم', '#8b5cf6')">
+                <i class="fa-solid fa-star text-yellow-400"></i>
+                <span id="userXP">0 XP</span>
+                <span class="text-slate-400 ml-1">| Lvl <span id="userLevel" class="text-white">1</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 md:px-8 max-w-6xl mx-auto w-full">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: INTRO (الإطار المفاهيمي) -->
+        <!-- ========================================== -->
+        <section id="tab-intro" class="view-section active">
+            <div class="text-center mb-10">
+                <span class="badge bg-c_intro/20 text-c_intro border border-c_intro/30 mb-3">أساسيات المهنة</span>
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-4">الإطار المفاهيمي للتدريس</h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">التمييز الدقيق بين المصطلحات الثلاثة هو العتبة الأولى في إعداد المعلم والباحث.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Teaching -->
+                <div class="bg-os_card rounded-2xl p-6 border border-c_intro/30 shadow-[0_0_15px_rgba(139,92,246,0.1)] relative">
+                    <h4 class="font-black text-c_intro text-xl mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-person-chalkboard"></i> التدريس (Teaching)
+                    </h4>
+                    <p class="text-xs text-slate-300 mb-4 leading-relaxed">العملية والمنظومة. ليس مجرد نشاط عشوائي، بل عملية ديناميكية هادفة يسعى من خلالها المعلم لتيسير التعلم.</p>
+                    <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+                        <li><strong class="text-white">الخصائص:</strong> عملية اجتماعية، إنسانية، مهنية وتخطيطية.</li>
+                        <li><strong class="text-white">المحور:</strong> التركيز على كيفية نقل المعرفة وتنمية المهارات (الجانب التطبيقي).</li>
+                    </ul>
+                </div>
+
+                <!-- Education -->
+                <div class="bg-os_card rounded-2xl p-6 border border-white/5 relative">
+                    <h4 class="font-black text-white text-xl mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open-reader text-blue-400"></i> التعليم (Instruction)
+                    </h4>
+                    <p class="text-xs text-slate-300 mb-4 leading-relaxed">الفعل والوسيلة. عملية تزويد المتعلم بالخبرات (المعرفية، المهارية، الوجدانية) بطريقة مقصودة.</p>
+                    <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+                        <li><strong class="text-blue-300">الفرق الجوهري:</strong> قد يحدث التعليم دون وجود معلم (عبر كتاب، أو تطبيق).</li>
+                        <li><strong class="text-blue-300">الشمول:</strong> التعليم أشمل من التدريس. (كل تدريس هو تعليم، وليس كل تعليم تدريساً).</li>
+                    </ul>
+                </div>
+
+                <!-- Learning -->
+                <div class="bg-os_card rounded-2xl p-6 border border-white/5 relative">
+                    <h4 class="font-black text-white text-xl mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-brain text-green-400"></i> التعلم (Learning)
+                    </h4>
+                    <p class="text-xs text-slate-300 mb-4 leading-relaxed">الأثر والنتيجة. تغير شبه دائم في سلوك الفرد نتيجة الخبرة. وهو الغاية الكبرى من كل العمليات.</p>
+                    <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+                        <li><strong class="text-green-300">مؤشرات الحدوث:</strong> لا يمكن رؤية التعلم مباشرة، بل نستدل عليه من تغير أداء الطالب.</li>
+                        <li><strong class="text-green-300">الاستمرارية:</strong> عملية مستمرة من المهد إلى اللحد، لا ترتبط بمكان أو زمان.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-os_card border border-white/10 rounded-xl p-5" data-section="1">
+                <h4 class="text-c_intro font-bold text-sm mb-4"><i class="fa-solid fa-bolt"></i> الاسترجاع الفوري (المفاهيم)</h4>
+                <div class="space-y-3" id="recall-sec-1"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: TASKS (مثلث الأداء المهني) -->
+        <!-- ========================================== -->
+        <section id="tab-tasks" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-c_tasks/20 text-c_tasks border border-c_tasks/30 mb-3">أدوات التنفيذ</span>
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-4">مثلث الأداء المهني</h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">أدوات التميز للمعلم الخبير: الإستراتيجية، الطريقة، والأسلوب.</p>
+            </div>
+
+            <div class="relative space-y-6 mb-10 pl-6 md:pl-10">
+                <!-- Triangle Visual Line -->
+                <div class="absolute right-4 md:right-8 top-0 bottom-0 w-1 bg-gradient-to-b from-c_tasks via-blue-500 to-purple-500 rounded-full"></div>
+
+                <!-- Strategy -->
+                <div class="relative">
+                    <div class="absolute -right-8 md:-right-12 top-4 w-6 h-6 rounded-full bg-os_bg border-4 border-c_tasks z-10 flex items-center justify-center"></div>
+                    <div class="bg-os_card p-5 rounded-2xl border border-c_tasks/30">
+                        <h4 class="font-black text-white text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-chess-knight text-c_tasks"></i> 1. إستراتيجية التدريس (Strategy)</h4>
+                        <p class="text-sm text-slate-300 mb-3">المظلة الكبرى التي تضم كافة الإجراءات والوسائل والأساليب التي يخطط المعلم لاستخدامها في الموقف التعليمي.</p>
+                        <div class="bg-[#0f172a] p-3 rounded-lg text-xs text-slate-400">
+                            <span class="text-c_tasks font-bold">طبيعتها:</span> تمتاز بالشمول، المرونة، وتنوع الأهداف بعيدة المدى. <br>
+                            <span class="text-white font-bold">مثال:</span> إستراتيجية التعلم البنائي (التي تضم عدة طرق بداخلها مثل دورة التعلم).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Method -->
+                <div class="relative">
+                    <div class="absolute -right-8 md:-right-12 top-4 w-6 h-6 rounded-full bg-os_bg border-4 border-blue-500 z-10 flex items-center justify-center"></div>
+                    <div class="bg-os_card p-5 rounded-2xl border border-white/5">
+                        <h4 class="font-black text-white text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-route text-blue-400"></i> 2. طريقة التدريس (Method)</h4>
+                        <p class="text-sm text-slate-300 mb-3">الآلية التنفيذية التي يختارها المعلم لتنظيم التفاعل بينه وبين الطالب والمحتوى.</p>
+                        <div class="bg-[#0f172a] p-3 rounded-lg text-xs text-slate-400">
+                            <span class="text-blue-400 font-bold">طبيعتها:</span> خطوات متسلسلة ومنظمة (مثل خطوات حل المشكلات أو المناقشة). <br>
+                            <span class="text-white font-bold">معيار اختيارها:</span> تعتمد على نوع المحتوى، خصائص الطالب، والزمن المتاح.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style -->
+                <div class="relative">
+                    <div class="absolute -right-8 md:-right-12 top-4 w-6 h-6 rounded-full bg-os_bg border-4 border-purple-500 z-10 flex items-center justify-center"></div>
+                    <div class="bg-os_card p-5 rounded-2xl border border-white/5">
+                        <h4 class="font-black text-white text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-fingerprint text-purple-400"></i> 3. أسلوب التدريس (Style)</h4>
+                        <p class="text-sm text-slate-300 mb-3">البصمة الفردية للمعلم في تنفيذ الطريقة؛ أي الكيفية التي يطبق بها المعلم إستراتيجيته.</p>
+                        <div class="bg-[#0f172a] p-3 rounded-lg text-xs text-slate-400">
+                            <span class="text-purple-400 font-bold">طبيعتها:</span> ترتبط بالسمات الشخصية للمعلم (نبرة الصوت، لغة الجسد، القدرة على التحفيز). <br>
+                            <span class="text-white font-bold">التباين:</span> قد يستخدم معلمان نفس الطريقة (المناقشة)، لكن أحدهما يكون "ديمقراطياً" والآخر "تسلطياً"، مما يغير نواتج التعلم تماماً!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-os_card border border-white/10 rounded-xl p-5" data-section="2">
+                <h4 class="text-c_tasks font-bold text-sm mb-4"><i class="fa-solid fa-bolt"></i> الاسترجاع الفوري (مثلث الأداء)</h4>
+                <div class="space-y-3" id="recall-sec-2"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: SYSTEM (منظومة التدريس) -->
+        <!-- ========================================== -->
+        <section id="tab-time" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-c_time/20 text-c_time border border-c_time/30 mb-3">هندسة التعلم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-4">التدريس كمنظومة متكاملة</h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">ينظر الفكر التربوي الحديث للتدريس باعتباره نظاماً (System) يتكون من عناصر متفاعلة وليس مجرد حصة دراسية.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                <!-- Inputs -->
+                <div class="bg-os_card p-5 rounded-xl border border-white/5 relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-c_time"></div>
+                    <h4 class="font-bold text-white mb-2 text-lg"><i class="fa-solid fa-box-open text-c_time ml-2"></i>1. المدخلات (Inputs)</h4>
+                    <p class="text-xs text-slate-400 mb-2">كل ما يدخل في عملية التدريس ويؤثر في جودتها:</p>
+                    <ul class="text-xs text-slate-300 list-disc list-inside space-y-1">
+                        <li><strong class="text-white">المعلم:</strong> إعداده الأكاديمي، خبراته، اتجاهاته.</li>
+                        <li><strong class="text-white">المتعلم:</strong> (أهم المدخلات) خصائصه العمرية، مستواه، قدراته المتعددة.</li>
+                        <li><strong class="text-white">المنهج:</strong> المحتوى العلمي وما يتضمنه من معارف ومهارات.</li>
+                        <li><strong class="text-white">بيئة التعلم:</strong> الإمكانات المادية، التكنولوجية، والمناخ النفسي.</li>
+                    </ul>
+                </div>
+
+                <!-- Processes -->
+                <div class="bg-os_card p-5 rounded-xl border border-white/5 relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+                    <h4 class="font-bold text-white mb-2 text-lg"><i class="fa-solid fa-cogs text-blue-400 ml-2"></i>2. العمليات (Processes)</h4>
+                    <p class="text-xs text-slate-400 mb-2">التفاعل الحي والأنشطة التي تجري داخل الموقف التعليمي:</p>
+                    <ul class="text-xs text-slate-300 list-disc list-inside space-y-1">
+                        <li><strong class="text-blue-300">التخطيط:</strong> اختيار الأهداف، الإستراتيجيات، الأنشطة.</li>
+                        <li><strong class="text-blue-300">التنفيذ (الحركية):</strong> عرض المادة، إدارة النقاش، توظيف الوسائل.</li>
+                        <li><strong class="text-blue-300">التقويم البنائي:</strong> متابعة الاستيعاب وتصحيح المسارات أولاً بأول.</li>
+                    </ul>
+                </div>
+
+                <!-- Outputs -->
+                <div class="bg-os_card p-5 rounded-xl border border-white/5 relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
+                    <h4 class="font-bold text-white mb-2 text-lg"><i class="fa-solid fa-check-circle text-green-400 ml-2"></i>3. المخرجات (Outputs)</h4>
+                    <p class="text-xs text-slate-400 mb-2">الثمرة النهائية في عملية التدريس:</p>
+                    <ul class="text-xs text-slate-300 list-disc list-inside space-y-1">
+                        <li>مدى تحقق الأهداف السلوكية والتربوية.</li>
+                        <li>التغير الفعلي في سلوك الطالب.</li>
+                        <li>اكتساب مهارات التفكير والعمل الجماعي.</li>
+                    </ul>
+                </div>
+
+                <!-- Feedback -->
+                <div class="bg-[#0f172a] p-5 rounded-xl border border-c_time/50 relative overflow-hidden shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-yellow-500"></div>
+                    <h4 class="font-bold text-white mb-2 text-lg"><i class="fa-solid fa-rotate-left text-yellow-400 ml-2"></i>4. التغذية الراجعة (Feedback)</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        المحرك الذي يضمن استمرارية تطور النظام؛ حيث يتم استخدام نتائج المخرجات لتعديل العمليات أو المدخلات في الدروس القادمة للوصول للتحسين المستمر.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-os_card border border-white/10 rounded-xl p-5" data-section="3">
+                <h4 class="text-c_time font-bold text-sm mb-4"><i class="fa-solid fa-bolt"></i> الاسترجاع الفوري (المنظومة)</h4>
+                <div class="space-y-3" id="recall-sec-3"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: ROLES & COMPETENCIES (الأدوار والكفايات) -->
+        <!-- ========================================== -->
+        <section id="tab-sys" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-c_sys/20 text-c_sys border border-c_sys/30 mb-3">معلم العصر الرقمي</span>
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-4">الأدوار والكفايات المهنية</h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">التحول نحو رقمنة التعلم يتطلب إعادة هندسة أدوار المعلم والمتعلم.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Teacher Roles -->
+                <div class="bg-os_card p-6 rounded-2xl border border-c_sys/30 relative">
+                    <div class="absolute top-4 left-4 text-4xl opacity-20 text-c_sys"><i class="fa-solid fa-chalkboard-user"></i></div>
+                    <h3 class="text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">أدوار المعلم الحديثة</h3>
+                    <ul class="text-sm text-slate-300 space-y-4">
+                        <li>
+                            <strong class="text-c_sys block mb-1">1. مسير للموقف التعليمي (Instructional Manager)</strong>
+                            إدارة التفاعلات الصفية وتوجيه مسارات التعلم لتحقيق الأهداف المخطط لها، بدلاً من التلقين.
+                        </li>
+                        <li>
+                            <strong class="text-c_sys block mb-1">2. مصمم ومنسق لمصادر التعلم (Learning Architect)</strong>
+                            تصميم خبرات تعليمية متكاملة تدمج بين الجانب التربوي والجانب التقني (Pedagogical-Technological Integration).
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Learner Roles -->
+                <div class="bg-[#0f172a] p-6 rounded-2xl border border-green-500/30 relative shadow-lg">
+                    <div class="absolute top-4 left-4 text-4xl opacity-20 text-green-500"><i class="fa-solid fa-user-graduate"></i></div>
+                    <h3 class="text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">أدوار المتعلم الحديثة</h3>
+                    <ul class="text-sm text-slate-300 space-y-4">
+                        <li>
+                            <strong class="text-green-400 block mb-1">1. مشارك ومنتج للمعرفة (Knowledge Producer)</strong>
+                            معالجة المعلومات، نقد المصادر، والمساهمة في الأنشطة التفاعلية (يعزز مهارات التفكير العليا).
+                        </li>
+                        <li>
+                            <strong class="text-green-400 block mb-1">2. عضو في مجتمع يتعلم (Collaborative Learner)</strong>
+                            التفاعل مع الأقران في مجموعات العمل وتبادل الأدوار القيادية لحل المشكلات.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-certificate text-c_sys ml-2"></i> الكفايات المهنية المعاصرة للمعلم</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
+                <div class="bg-os_card p-4 rounded-xl border border-white/5 hover:border-c_sys/50 transition-colors">
+                    <i class="fa-solid fa-pen-ruler text-2xl mb-2 text-slate-400 block"></i>
+                    <strong class="text-white text-sm">الكفاية التخطيطية</strong>
+                    <p class="text-[10px] text-slate-400 mt-1">صياغة نواتج تعلم قابلة للقياس وتصميم سيناريوهات مرنة.</p>
+                </div>
+                <div class="bg-os_card p-4 rounded-xl border border-white/5 hover:border-c_sys/50 transition-colors">
+                    <i class="fa-solid fa-laptop-code text-2xl mb-2 text-c_sys block"></i>
+                    <strong class="text-white text-sm">الأدائية والتقنية</strong>
+                    <p class="text-[10px] text-slate-400 mt-1">دمج أدوات الويب 2.0/3.0 بوعي تربوي وليس كهدف بحد ذاته.</p>
+                </div>
+                <div class="bg-os_card p-4 rounded-xl border border-white/5 hover:border-c_sys/50 transition-colors">
+                    <i class="fa-solid fa-chart-pie text-2xl mb-2 text-slate-400 block"></i>
+                    <strong class="text-white text-sm">التقويمية الشاملة</strong>
+                    <p class="text-[10px] text-slate-400 mt-1">استخدام التقويم البديل والإلكتروني وتقديم تغذية راجعة فورية.</p>
+                </div>
+                <div class="bg-os_card p-4 rounded-xl border border-white/5 hover:border-c_sys/50 transition-colors">
+                    <i class="fa-solid fa-infinity text-2xl mb-2 text-c_sys block"></i>
+                    <strong class="text-white text-sm">التعلم المستمر</strong>
+                    <p class="text-[10px] text-slate-400 mt-1">التنمية المهنية الذاتية لملاحقة التطور المتسارع.</p>
+                </div>
+            </div>
+
+            <div class="bg-os_card border border-white/10 rounded-xl p-5" data-section="4">
+                <h4 class="text-c_sys font-bold text-sm mb-4"><i class="fa-solid fa-bolt"></i> الاسترجاع الفوري (الكفايات)</h4>
+                <div class="space-y-3" id="recall-sec-4"></div>
+            </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: EXAM (الامتحان) -->
+        <!-- ========================================== -->
+        <section id="tab-exam" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-c_exam/20 text-c_exam border border-c_exam/30 mb-3">اختبار الفصل الأول</span>
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-4">بنك الأسئلة الشامل</h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">اختبر استيعابك للمفاهيم، المنظومة، والكفايات الخاصة بطرق التدريس.</p>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="bg-[#0f172a] border border-c_exam/40 p-6 md:p-10 rounded-2xl shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 opacity-5 text-9xl text-c_exam"><i class="fa-solid fa-gamepad"></i></div>
+                
+                <div id="quiz-start" class="text-center relative z-10">
+                    <i class="fa-solid fa-brain text-6xl text-c_exam mb-6 animate-pulse"></i>
+                    <h3 class="text-2xl font-black text-white mb-2">التحدي النهائي للمعلم</h3>
+                    <p class="text-sm text-slate-400 mb-8">محاكي اختبار من 10 أسئلة مقتبسة من بنك الأسئلة المعتمد للمادة.</p>
+                    <button onclick="startQuiz()" class="bg-c_exam text-white font-black px-10 py-4 rounded-xl hover:bg-red-600 transition-all shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+                        بدء الاختبار
+                    </button>
+                </div>
+                
+                <div id="quiz-area" class="hidden relative z-10 min-h-[300px]">
+                    <div class="flex justify-between items-center mb-6 text-xs font-bold border-b border-white/10 pb-4">
+                        <span id="q-counter" class="text-c_exam bg-c_exam/10 px-3 py-1 rounded">السؤال 1 / 10</span>
+                        <span id="q-type" class="text-slate-400">نوع السؤال</span>
+                    </div>
+                    <h4 id="q-text" class="text-lg md:text-xl font-bold text-white mb-8 leading-relaxed">نص السؤال...</h4>
+                    <div id="q-options" class="space-y-3">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden text-center py-10 relative z-10">
+                    <h3 class="text-3xl font-black text-white mb-2">اكتمل التقييم!</h3>
+                    <p class="text-xl text-c_exam font-bold mb-6">النتيجة: <span id="final-score" class="text-4xl text-white">0</span> / 10</p>
+                    <div id="result-msg" class="text-sm text-slate-300 mb-8 bg-os_card p-4 rounded-lg inline-block border border-white/10"></div>
+                    <br>
+                    <button onclick="document.getElementById('quiz-result').classList.add('hidden'); document.getElementById('quiz-start').classList.remove('hidden');" class="bg-os_card text-white px-8 py-3 rounded-lg border border-white/20 hover:border-c_exam hover:text-c_exam transition-all font-bold">
+                        إعادة الاختبار
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 w-full bg-[#0f172a] border-t border-white/10 pb-safe z-50">
+        <div class="flex justify-between items-center px-1 py-3 max-w-2xl mx-auto">
+            <button onclick="switchTab('intro')" id="nav-intro" data-color="intro" class="nav-item active flex flex-col items-center gap-1 w-1/5 text-slate-500 transition-all">
+                <i class="fa-solid fa-book-open text-lg"></i>
+                <span class="text-[10px] font-bold">المفاهيم</span>
+            </button>
+            <button onclick="switchTab('tasks')" id="nav-tasks" data-color="tasks" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-500 transition-all">
+                <i class="fa-solid fa-sitemap text-lg"></i>
+                <span class="text-[10px] font-bold">المثلث</span>
+            </button>
+            <button onclick="switchTab('time')" id="nav-time" data-color="time" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-500 transition-all">
+                <i class="fa-solid fa-cogs text-lg"></i>
+                <span class="text-[10px] font-bold">المنظومة</span>
+            </button>
+            <button onclick="switchTab('sys')" id="nav-sys" data-color="sys" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-500 transition-all">
+                <i class="fa-solid fa-users text-lg"></i>
+                <span class="text-[10px] font-bold">الأدوار</span>
+            </button>
+            <button onclick="switchTab('exam')" id="nav-exam" data-color="exam" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-500 transition-all">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+                <span class="text-[10px] font-bold">الامتحان</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // --- Gamification & UI Logic (Isolated keys for Teaching Course) ---
+        let xp = parseInt(localStorage.getItem('teaching_xp_ch1')) || 0;
+        let lvl = parseInt(localStorage.getItem('teaching_lvl_ch1')) || 1;
+
+        function updateUI() {
+            if(document.getElementById('userXP')) document.getElementById('userXP').innerText = `${xp} XP`;
+            if(document.getElementById('userLevel')) document.getElementById('userLevel').innerText = lvl;
+            if(document.getElementById('xpBar')) document.getElementById('xpBar').style.width = `${xp % 100}%`;
+        }
+
+        function addXP(amount, message, color = '#10b981') {
+            xp += amount;
+            let newLvl = Math.floor(xp / 100) + 1;
+            
+            if(newLvl > lvl) { 
+                lvl = newLvl; 
+                showFloatingText('🎉 ارتقاء مستوى!', color); 
+            } else { 
+                showFloatingText(`+${amount} XP ${message}`, color); 
+            }
+            
+            // Save to LocalStorage
+            localStorage.setItem('teaching_xp_ch1', xp);
+            localStorage.setItem('teaching_lvl_ch1', lvl);
+            
+            updateUI();
+        }
+
+        function showFloatingText(text, color) {
+            const el = document.createElement('div');
+            el.className = 'xp-popup';
+            el.style.color = color;
+            el.innerText = text;
+            const x = window.innerWidth / 2 + (Math.random() * 60 - 30);
+            const y = window.innerHeight / 2;
+            el.style.left = `${x}px`; el.style.top = `${y}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1200);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const targetNav = document.getElementById(`nav-${tabId}`);
+            if(targetNav) targetNav.classList.add('active');
+
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // --- Active Recall Data ---
+        const recallData = {
+            1: [
+                { q: "ما هو الفرق الجوهري بين التدريس والتعليم؟", a: "التعليم أعم وأشمل، وقد يحدث دون وجود معلم (كتاب، تطبيق)، بينما التدريس يركز على كيفية نقل المعرفة بواسطة المعلم." },
+                { q: "كيف نستدل على حدوث التعلم؟", a: "لا يمكن رؤية التعلم مباشرة، بل نستدل عليه من خلال حدوث تغير في أداء وسلوك المتعلم." }
+            ],
+            2: [
+                { q: "كيف تفرق بين طريقة التدريس وأسلوب التدريس؟", a: "الطريقة هي الآلية المنظمة والخطوات، بينما الأسلوب هو البصمة الشخصية للمعلم في تنفيذ هذه الطريقة (مثل نبرة الصوت أو الديمقراطية)." },
+                { q: "أعط مثالاً على إستراتيجية التدريس وما تحويه.", a: "إستراتيجية التعلم البنائي، وهي المظلة الكبرى التي تشمل بداخلها طرقاً متعددة مثل (دورة التعلم)." }
+            ],
+            3: [
+                { q: "ما هو أهم عنصر في مدخلات منظومة التدريس؟", a: "المتعلم، حيث تعتبر خصائصه ومستواه أهم المدخلات التي تبنى عليها بقية العمليات." },
+                { q: "ما هي وظيفة التغذية الراجعة (Feedback)؟", a: "هي المحرك الذي يضمن التطور المستمر، عبر استخدام نتائج المخرجات لتعديل العمليات أو المدخلات." }
+            ],
+            4: [
+                { q: "ما هو دور المعلم الحديث (مصمم ومنسق لمصادر التعلم)؟", a: "تصميم خبرات تعليمية متكاملة تدمج بين الجانب التربوي والجانب التقني بدلاً من مجرد اختيار الوسيلة." },
+                { q: "ما المقصود بـ 'الكفاية التقويمية الشاملة'؟", a: "القدرة على استخدام أساليب التقويم البديل والإلكتروني، وتحليل النتائج لتقديم تغذية راجعة فورية وبناءة." }
+            ]
+        };
+
+        // Render Active Recall
+        function renderRecallSections() {
+            Object.keys(recallData).forEach(secId => {
+                const container = document.getElementById(`recall-sec-${secId}`);
+                if(!container) return;
+                let html = '';
+                recallData[secId].forEach((item, idx) => {
+                    html += `
+                        <div class="bg-os_card p-3 rounded shadow-sm border border-white/5 mb-2 cursor-pointer transition hover:bg-[#0f172a]" onclick="toggleRecallAnswer(this)">
+                            <div class="text-sm font-bold text-white flex justify-between items-center">
+                                <span>${idx+1}. ${item.q}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 text-xs transition-transform duration-300"></i>
+                            </div>
+                            <div class="answer-content hidden mt-2 pt-2 border-t border-white/5 text-[13px] text-emerald-400 font-medium leading-relaxed">
+                                ${item.a}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        let answeredRecalls = new Set();
+        function toggleRecallAnswer(el) {
+            const ans = el.querySelector('.answer-content');
+            const icon = el.querySelector('i.fa-solid');
+            
+            ans.classList.toggle('hidden');
+            
+            if(!ans.classList.contains('hidden')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                if(!answeredRecalls.has(el)) { 
+                    answeredRecalls.add(el); 
+                    addXP(5, 'استرجاع نشط', '#8b5cf6'); 
+                }
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        }
+
+        // --- Quiz Engine (Based on user provided questions) ---
+        const quizQuestions = [
+            { type: "صح وخطأ", q: "يُعد التدريس عملية عشوائية تعتمد فقط على موهبة المعلم الشخصية دون الحاجة لتخطيط مسبق.", opts: ["صح", "خطأ"], ans: 1, exp: "التدريس ليس نشاطاً عشوائياً، بل عملية ديناميكية هادفة ومخطط لها مهنياً." },
+            { type: "صح وخطأ", q: "الإستراتيجية هي أعم وأشمل من طريقة التدريس، حيث تمثل خطة سير العمل لتحقيق الأهداف.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح، الإستراتيجية هي المظلة الكبرى التي تندرج تحتها طرق وأساليب التدريس المتنوعة." },
+            { type: "صح وخطأ", q: "ينحصر مفهوم التعلم في الممارسات التي تتم داخل أسوار المدرسة فقط تحت إشراف المعلم.", opts: ["صح", "خطأ"], ans: 1, exp: "التعلم عملية مستمرة من المهد إلى اللحد، ولا ترتبط بمكان أو زمان محدد." },
+            { type: "صح وخطأ", q: "في منظومة التدريس، تمثل مهارات الطالب واتجاهاتهم نحو المادة جزءاً من 'المدخلات'.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح، المتعلم (بخصائصه وقدراته) يعتبر من أهم مدخلات منظومة التدريس." },
+            { type: "صح وخطأ", q: "يعتبر أسلوب التدريس مرتبطاً بالخصائص الشخصية للمعلم وكيفية تنفيذه للطريقة.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح، الأسلوب هو البصمة الفردية للمعلم، ويرتبط بلغة جسده ونبرة صوته." },
+            { type: "اختياري", q: "العملية التي تهدف إلى إحداث تغيير شبه دائم في سلوك المتعلم نتيجة الخبرة والممارسة هي:", opts: ["التدريس", "التعليم", "التعلم", "التلقين"], ans: 2, exp: "التعلم هو الأثر الثابت والتغير المستمر في أداء المتعلم." },
+            { type: "اختياري", q: "المكون الذي يتضمن العمليات والإجراءات التفاعلية داخل الصف يسمى في المنظومة بـ:", opts: ["المخرجات", "العمليات", "التغذية الراجعة", "المدخلات"], ans: 1, exp: "العمليات تشمل التخطيط والتنفيذ والتقويم البنائي أثناء سير الدرس." },
+            { type: "اختياري", q: "من الكفايات التكنولوجية الواجب توافرها في معلم القرن الحادي والعشرين:", opts: ["استخدام السبورة التقليدية فقط", "القدرة على تصميم بيئات تعلم رقمية", "الاعتماد الكلي على الكتاب الورقي", "تجنب استخدام الوسائط المتعددة"], ans: 1, exp: "تصميم بيئات التعلم الرقمية ودمج التقنية (الأدائية والتقنية) من أهم كفايات العصر." },
+            { type: "اختياري", q: "يطلق مصطلح التعلم الإلكتروني المتزامن على:", opts: ["التعلم عبر البريد الإلكتروني", "اللقاءات الحية عبر الفصول الافتراضية", "قراءة الكتب الإلكترونية", "حل الاختبارات الورقية"], ans: 1, exp: "المتزامن يعني حدوث التفاعل في نفس اللحظة (Live) كالفصول الافتراضية." },
+            { type: "مفاهيم عامة", q: "التحول نحو 'رقمنة التعلم' يتطلب أن يكون المتعلم:", opts: ["متلقياً سلبياً للمعلومات", "مشاركاً ومنتجاً للمعرفة", "معتمداً كلياً على المعلم", "مجرد مستمع جيد"], ans: 1, exp: "في العصر الرقمي، يجب أن ينتقل المتعلم من المتلقي إلى دور (المشارك والمنتج للمعرفة)." }
+        ];
+
+        let currQ = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currQ = 0;
+            score = 0;
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-area').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizQuestions[currQ];
+            document.getElementById('q-counter').innerText = `السؤال ${currQ + 1} / ${quizQuestions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerText = q.q;
+            
+            const optsDiv = document.getElementById('q-options');
+            optsDiv.innerHTML = '';
+            
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-right p-4 rounded-xl border-2 border-white/5 bg-os_card hover:border-c_sys hover:bg-[#0f172a] transition-all text-sm font-bold text-slate-200 shadow-sm";
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(idx, btnNode) {
+            const q = quizQuestions[currQ];
+            const allBtns = document.getElementById('q-options').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+            
+            if(idx === q.ans) {
+                btnNode.classList.add('bg-green-900/40', 'border-green-500', 'text-green-400');
+                score++;
+                addXP(15, 'إجابة صحيحة!', '#10b981');
+            } else {
+                btnNode.classList.add('bg-red-900/40', 'border-red-500', 'text-red-400');
+                allBtns[q.ans].classList.add('bg-green-900/40', 'border-green-500', 'text-green-400');
+                addXP(0, 'تعلم من الخطأ', '#64748b');
+            }
+            
+            const expDiv = document.createElement('div');
+            expDiv.className = "mt-4 p-3 bg-os_card border-l-4 border-c_sys rounded text-xs text-slate-300 leading-relaxed";
+            expDiv.innerHTML = `<strong class="text-c_sys">التفسير:</strong> ${q.exp}`;
+            document.getElementById('q-options').appendChild(expDiv);
+            
+            setTimeout(() => {
+                currQ++;
+                if(currQ < quizQuestions.length) loadQuestion();
+                else showResults();
+            }, 3500);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-area').classList.add('hidden');
+            const resDiv = document.getElementById('quiz-result');
+            resDiv.classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            
+            let msg = "";
+            if(score === 10) msg = "أداء استثنائي! لقد أثبتّ كفاءتك كمعلم خبير في العصر الرقمي. 👑";
+            else if(score >= 7) msg = "أداء ممتاز! فهمك لأساسيات التدريس متين جداً. 🧠";
+            else msg = "تحتاج إلى مراجعة مثلث الأداء والمنظومة مجدداً! 🔄";
+            
+            document.getElementById('result-msg').innerHTML = `<strong>${msg}</strong>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecallSections();
+            updateUI();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أكاديمية التدريس | الفصل الخامس: التعلم الذاتي والرقمي</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        bg_light: '#f8fafc',       
+                        card_light: '#ffffff',     
+                        text_main: '#1e293b',      
+                        text_muted: '#64748b',     
+                        c_packages: '#06b6d4',     // سماوي: الحقائب التعليمية
+                        c_modules: '#f43f5e',      // وردي: الموديولات التعليمية
+                        c_digital: '#8b5cf6',      // بنفسجي: التعلم الرقمي والمدمج
+                        c_summary: '#3b82f6',      // أزرق: الخلاصة
+                        c_exam: '#dc2626',         // أحمر: الامتحان
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.04), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.04), transparent 25%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .view-section { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nav active states */
+        .nav-item.active { transform: translateY(-5px); font-weight: 800; }
+        .nav-item.active[data-color="packages"] { color: #06b6d4; }
+        .nav-item.active[data-color="modules"] { color: #f43f5e; }
+        .nav-item.active[data-color="digital"] { color: #8b5cf6; }
+        .nav-item.active[data-color="summary"] { color: #3b82f6; }
+        .nav-item.active[data-color="exam"] { color: #dc2626; }
+
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%;
+        }
+        .nav-item.active[data-color="packages"]::after { background: #06b6d4; }
+        .nav-item.active[data-color="modules"]::after { background: #f43f5e; }
+        .nav-item.active[data-color="digital"]::after { background: #8b5cf6; }
+        .nav-item.active[data-color="summary"]::after { background: #3b82f6; }
+        .nav-item.active[data-color="exam"]::after { background: #dc2626; }
+
+        .badge { font-size: 11px; padding: 4px 10px; border-radius: 9999px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; }
+
+        @keyframes floatUpXP { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.4); } }
+        .xp-popup { position: fixed; font-weight: 900; font-size: 1.5rem; pointer-events: none; z-index: 9999; animation: floatUpXP 1.2s ease-out forwards; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-header px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border border-slate-200 rounded-xl flex items-center justify-center font-space font-black text-white shadow-sm bg-gradient-to-br from-c_packages to-c_digital">
+                    <i class="fa-solid fa-laptop-house"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-text_main text-sm md:text-base tracking-wide">أكاديمية المعلم | الفصل 5</h1>
+                    <div class="w-32 h-1.5 bg-slate-200 rounded-full mt-1 overflow-hidden">
+                        <div id="xpBar" class="h-full bg-gradient-to-r from-c_packages to-c_digital transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border border-slate-200 px-3 py-1.5 rounded-full text-xs font-space font-bold tracking-wider flex items-center gap-2 text-text_main shadow-sm cursor-pointer hover:bg-slate-50 transition" onclick="addXP(5, 'تفقد النظام', '#06b6d4')">
+                <i class="fa-solid fa-star text-yellow-500"></i>
+                <span id="userXP">0 XP</span>
+                <span class="text-slate-400 ml-1">| Lvl <span id="userLevel" class="text-c_packages font-black">1</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 md:px-8 max-w-6xl mx-auto w-full">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: PACKAGES (الحقائب التعليمية) -->
+        <!-- ========================================== -->
+        <section id="tab-packages" class="view-section active">
+            <div class="text-center mb-10">
+                <span class="badge bg-cyan-100 text-c_packages border border-cyan-200 mb-3">تفريد التعليم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">إستراتيجية الحقائب التعليمية</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">نظام تعليمي متكامل وشامل (Learning Packages) يُصمم لتفريد التعليم، ليتيح للمتعلم السير وفق سرعته وقدراته.</p>
+            </div>
+
+            <!-- Components -->
+            <div class="bg-white card-shadow rounded-2xl p-6 mb-8 border-r-4 border-r-c_packages relative overflow-hidden">
+                <div class="absolute -left-6 -bottom-6 text-8xl text-cyan-50 opacity-50"><i class="fa-solid fa-suitcase"></i></div>
+                <h3 class="text-xl font-bold text-text_main mb-6 relative z-10"><i class="fa-solid fa-layer-group text-c_packages ml-2"></i> المكونات الهيكلية للحقيبة</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 text-sm">
+                    <div class="bg-cyan-50 p-4 rounded-xl border border-cyan-100">
+                        <strong class="text-c_packages block mb-1">1. دليل الحقيبة:</strong>
+                        <span class="text-text_main">الخارطة التي ترشد الطالب لكيفية البدء، والمسارات التي يجب سلوكها، وكيفية استخدام المصادر.</span>
+                    </div>
+                    <div class="bg-cyan-50 p-4 rounded-xl border border-cyan-100">
+                        <strong class="text-c_packages block mb-1">2. الأهداف السلوكية:</strong>
+                        <span class="text-text_main">تحديد دقيق وواضح للنتاجات المتوقع تحقيقها بعد الانتهاء من الدراسة.</span>
+                    </div>
+                    <div class="bg-cyan-50 p-4 rounded-xl border border-cyan-100 md:col-span-2">
+                        <strong class="text-c_packages block mb-1">3. الأنشطة والبدائل التعليمية:</strong>
+                        <span class="text-text_main">توفير خيارات متنوعة (نصوص، فيديو، تجارب، برمجيات) ليختار الطالب ما يتوافق مع نمط تعلمه (بصري، سمعي، حركي).</span>
+                    </div>
+                </div>
+
+                <!-- Evaluation -->
+                <div class="mt-6 relative z-10">
+                    <h4 class="font-bold text-text_main mb-3">4. منظومة التقويم (تضم 3 أنواع):</h4>
+                    <ul class="space-y-2 text-sm text-text_muted list-disc list-inside">
+                        <li><strong class="text-text_main">الاختبار القبلي:</strong> لتحديد مستوى الطالب قبل البدء (هل يحتاج للحقيبة أم يتقن مهاراتها؟).</li>
+                        <li><strong class="text-text_main">التقويم البنائي (التكويني):</strong> أسئلة تتخلل الأنشطة للتأكد من صحة مسار التعلم.</li>
+                        <li><strong class="text-text_main">الاختبار البعدي:</strong> لقياس مدى تحقق الأهداف النهائية للحقيبة.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Characteristics -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-text_main mb-4"><i class="fa-solid fa-gem text-c_packages ml-2"></i> الخصائص التربوية</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex gap-2 items-start">
+                            <i class="fa-solid fa-check text-c_packages mt-1"></i>
+                            <div><strong class="block text-text_main">التغذية الراجعة الفورية:</strong> يعرف الطالب نتيجة إجابته فوراً من مفاتيح الحل المرفقة.</div>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fa-solid fa-check text-c_packages mt-1"></i>
+                            <div><strong class="block text-text_main">الإتقان (Mastery):</strong> لا ينتقل لنشاط آخر إلا بعد إتقان النشاط الحالي بنسبة معينة (غالباً 80%).</div>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fa-solid fa-check text-c_packages mt-1"></i>
+                            <div><strong class="block text-text_main">تعدد المسارات:</strong> تسمح باختيار البديل التعليمي الأفضل للوصول لنفس الهدف.</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Example -->
+                <div class="bg-white card-shadow rounded-2xl p-6 border border-slate-200">
+                    <h3 class="text-lg font-bold text-text_main mb-4"><i class="fa-solid fa-lightbulb text-yellow-500 ml-2"></i> مثال تطبيقي</h3>
+                    <div class="bg-cyan-50 text-cyan-800 p-3 rounded text-sm mb-3 font-bold border border-cyan-200">
+                        عنوان الحقيبة: "مهارات تصميم العروض التقديمية التفاعلية"
+                    </div>
+                    <ul class="text-xs text-text_muted space-y-2 leading-relaxed list-disc list-inside">
+                        <li>يجد الطالب <strong class="text-text_main">دليلاً</strong> يخبره بمسارات التعلم (فيديو، كتيب مصور، أو تطبيق عملي).</li>
+                        <li>يقوم بأداء <strong class="text-text_main">اختبار قبلي</strong>، فإذا حصل على درجة مرتفعة، ينتقل لحقيبة أخرى.</li>
+                        <li>وإذا لم يوفق، يبدأ في دراسة <strong class="text-text_main">الأنشطة</strong> التي اختارها بحسب نمطه المفضل.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Active Recall 1 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="1">
+                <h4 class="text-c_packages font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-1"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: MODULES (الموديولات التعليمية) -->
+        <!-- ========================================== -->
+        <section id="tab-modules" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-rose-100 text-c_modules border border-rose-200 mb-3">وحدات مركزة</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">الموديولات التعليمية</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">وحدة تعليمية صغيرة (Instructional Modules)، محددة، ومكتملة بذاتها، مصممة لإتقان مهارة واحدة أو مفهوم محدد.</p>
+            </div>
+
+            <!-- Features -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white card-shadow p-5 rounded-xl border-t-4 border-t-c_modules">
+                    <i class="fa-solid fa-bullseye text-2xl text-c_modules mb-3"></i>
+                    <h4 class="font-bold text-text_main mb-2">1. وحدة الموضوع</h4>
+                    <p class="text-xs text-text_muted">يركز على فكرة واحدة مركزة (مثال: كيفية استخدام أداة معينة) لضمان عدم التشتت.</p>
+                </div>
+                <div class="bg-white card-shadow p-5 rounded-xl border-t-4 border-t-rose-400">
+                    <i class="fa-solid fa-person-chalkboard text-2xl text-rose-400 mb-3"></i>
+                    <h4 class="font-bold text-text_main mb-2">2. التعلم الذاتي</h4>
+                    <p class="text-xs text-text_muted">مصمم بحيث يتعامل معه الطالب دون الحاجة لوجود المعلم، لتوفر كافة الإرشادات.</p>
+                </div>
+                <div class="bg-white card-shadow p-5 rounded-xl border-t-4 border-t-rose-300">
+                    <i class="fa-solid fa-box text-2xl text-rose-300 mb-3"></i>
+                    <h4 class="font-bold text-text_main mb-2">3. نظام مغلق (Self-contained)</h4>
+                    <p class="text-xs text-text_muted">يحتوي على أهدافه، وأنشطته، وأدوات تقويمه الخاصة المستقلة تماماً.</p>
+                </div>
+            </div>
+
+            <!-- Structure & Value -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8 flex flex-col md:flex-row gap-6">
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-text_main mb-4"><i class="fa-solid fa-sitemap text-c_modules ml-2"></i> الهيكل التنظيمي للموديول</h3>
+                    <ul class="relative border-r-2 border-rose-200 pr-4 space-y-4 text-sm text-text_muted">
+                        <li><div class="absolute -right-[9px] top-1.5 w-4 h-4 bg-c_modules rounded-full border-4 border-slate-50"></div>
+                            <strong class="text-text_main">1. المقدمة:</strong> تمهيد يربط الموديول بالخبرات السابقة.</li>
+                        <li><div class="absolute -right-[9px] top-1.5 w-4 h-4 bg-rose-400 rounded-full border-4 border-slate-50"></div>
+                            <strong class="text-text_main">2. الأهداف:</strong> عبارات سلوكية محددة تصف ما سيتعلمه.</li>
+                        <li><div class="absolute -right-[9px] top-1.5 w-4 h-4 bg-rose-300 rounded-full border-4 border-slate-50"></div>
+                            <strong class="text-text_main">3. الاختبار القبلي:</strong> لتحديد مدى حاجة الطالب لدراسته.</li>
+                        <li><div class="absolute -right-[9px] top-1.5 w-4 h-4 bg-rose-200 rounded-full border-4 border-slate-50"></div>
+                            <strong class="text-text_main">4. الأنشطة التعليمية:</strong> تسلسل منظم للخبرات (نصوص، صور، فيديو).</li>
+                        <li><div class="absolute -right-[9px] top-1.5 w-4 h-4 bg-rose-100 rounded-full border-4 border-slate-50"></div>
+                            <strong class="text-text_main">5. الاختبار البعدي:</strong> للتأكد من الوصول لمرحلة الإتقان.</li>
+                    </ul>
+                </div>
+                <div class="flex-1 flex flex-col justify-center">
+                    <div class="bg-rose-50 p-5 rounded-xl border border-rose-100 shadow-sm text-center">
+                        <i class="fa-solid fa-trophy text-4xl text-c_modules mb-3"></i>
+                        <h4 class="font-bold text-text_main mb-2">القيمة التربوية (الإنجاز السريع)</h4>
+                        <p class="text-xs text-rose-800 leading-relaxed">
+                            تكمن أهمية الموديولات في كونها تمنح المتعلم شعوراً بـ "الإنجاز السريع"؛ فتجزيء المنهج إلى وحدات صغيرة يقلل من رهبة المادة العلمية ويزيد من كفاءة التعلم.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 2 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="2">
+                <h4 class="text-c_modules font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-2"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: DIGITAL & BLENDED (التعلم الرقمي والمدمج) -->
+        <!-- ========================================== -->
+        <section id="tab-digital" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-violet-100 text-c_digital border border-violet-200 mb-3">التكنولوجيا والتعليم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">أنماط التعلم الإلكتروني والمدمج</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">المظلة التقنية التي تسمح بتقديم المحتوى عبر الوسائط الرقمية بأنماط تناسب البيئة الجامعية الحديثة.</p>
+            </div>
+
+            <!-- Synchronous vs Asynchronous -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white card-shadow rounded-2xl p-6 border-t-4 border-t-c_digital">
+                    <h3 class="text-lg font-bold text-text_main mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-video text-c_digital"></i> التعلم المتزامن (Synchronous)
+                    </h3>
+                    <p class="text-sm text-text_muted mb-4">يجمع المعلم والطلاب في <strong>نفس الوقت</strong> رغم اختلاف المكان، ويتم عبر الفصول الافتراضية أو البث المباشر.</p>
+                    <div class="bg-violet-50 text-violet-800 p-3 rounded-lg text-xs font-bold border border-violet-100">
+                        <i class="fa-solid fa-star text-yellow-500 ml-1"></i> ميزته الأساسية:
+                        <span class="font-normal block mt-1">التفاعل اللحظي والحصول على تغذية راجعة فورية.</span>
+                    </div>
+                </div>
+
+                <div class="bg-white card-shadow rounded-2xl p-6 border-t-4 border-t-violet-400">
+                    <h3 class="text-lg font-bold text-text_main mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-violet-400"></i> التعلم غير المتزامن (Asynchronous)
+                    </h3>
+                    <p class="text-sm text-text_muted mb-4"><strong>لا يشترط</strong> وجود المعلم والطلاب في نفس الوقت، يتم رفع المحتوى على منصات (مثل Moodle).</p>
+                    <div class="bg-violet-50 text-violet-800 p-3 rounded-lg text-xs font-bold border border-violet-100">
+                        <i class="fa-solid fa-star text-yellow-500 ml-1"></i> ميزته الأساسية:
+                        <span class="font-normal block mt-1">يمنح الطالب الحرية الكاملة في اختيار زمان ومكان التعلم الذي يناسبه.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blended & Flipped Classroom -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8 relative overflow-hidden">
+                <div class="absolute -left-6 -bottom-6 text-8xl text-violet-100 opacity-50"><i class="fa-solid fa-shuffle"></i></div>
+                <h3 class="text-xl font-bold text-text_main mb-3 relative z-10"><i class="fa-solid fa-puzzle-piece text-c_digital ml-2"></i> التعلم المدمج (Blended Learning)</h3>
+                <p class="text-sm text-text_muted mb-6 relative z-10">
+                    "هندسة تعليمية" تجمع بذكاء بين التعليم التقليدي (وجهاً لوجه) والتعليم الإلكتروني، بحيث لا يكون أحدهما بديلاً عن الآخر بل يكمل كل منهما الآخر.
+                </p>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 relative z-10 shadow-sm">
+                    <h4 class="font-bold text-c_digital mb-4 text-lg"><i class="fa-solid fa-rotate text-c_digital ml-2"></i> نموذج الصف المقلوب (Flipped Classroom)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-violet-100 p-4 rounded-lg bg-violet-50/50">
+                            <strong class="text-text_main block mb-2"><i class="fa-solid fa-house-user text-violet-500 ml-1"></i> خارج الفصل (رقمياً):</strong>
+                            <p class="text-xs text-text_muted">يشاهد الطالب المحتوى العلمي (فيديو، موديول) في منزله للتحصيل النظري <strong>قبل الحضور</strong>.</p>
+                        </div>
+                        <div class="border border-violet-100 p-4 rounded-lg bg-violet-50/50">
+                            <strong class="text-text_main block mb-2"><i class="fa-solid fa-users text-violet-500 ml-1"></i> داخل الفصل (تفاعلياً):</strong>
+                            <p class="text-xs text-text_muted">يُخصص وقت الحصة <strong>بالكامل</strong> للنقاش، وحل المشكلات، والجانب العملي تحت إشراف المعلم.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 3 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="3">
+                <h4 class="text-c_digital font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-3"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: SUMMARY (الخلاصة) -->
+        <!-- ========================================== -->
+        <section id="tab-summary" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-blue-100 text-c_summary border border-blue-200 mb-3">ربط المفاهيم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">من الفردية إلى الرقمنة</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">تحويل العملية التعليمية لنظام مرن يستجيب لاحتياجات كل متعلم بفضل التكنولوجيا.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_packages">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-suitcase text-c_packages ml-2"></i> الحقائب التعليمية (التعلم المتكامل)</h3>
+                    <p class="text-sm text-text_muted">نظام شامل يوفر بدائل متعددة، يعتمد على "الدليل" للإرشاد و"الاختبارات" لضبط الجودة، لمنح الطالب استقلالية كاملة وتفريد التعلم.</p>
+                </div>
+                
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_modules">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-cubes text-c_modules ml-2"></i> الموديولات التعليمية (التعلم المركز)</h3>
+                    <p class="text-sm text-text_muted">وحدات صغيرة لإتقان مهارة محددة، تتميز بـ "نظامها المغلق" والتغذية الراجعة الفورية التي تضمن الإتقان قبل الانتقال لغيرها.</p>
+                </div>
+
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_digital md:col-span-2">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-rotate text-c_digital ml-2"></i> التعلم الرقمي والمدمج (مرونة الزمان والمكان)</h3>
+                    <p class="text-sm text-text_muted">
+                        يكسر حواجز الجغرافيا بالتعلم (المتزامن وغير المتزامن). ويعتبر <strong>التعلم المدمج والصف المقلوب</strong> الحل الأمثل للبيئة الجامعية باستثمار وقت القاعة في التطبيق، وتحصيل النظري رقمياً.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center text-blue-800 font-bold shadow-sm">
+                التمكن من هذه الاستراتيجيات ليس مهارة إضافية، بل ضرورة حتمية لمعلم القرن الحادي والعشرين لمواكبة الانفجار المعرفي!
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: EXAM (الامتحان) -->
+        <!-- ========================================== -->
+        <section id="tab-exam" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-red-100 text-c_exam border border-red-200 mb-3">اختبار الفصل الخامس</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">بنك الأسئلة الشامل</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">تتضمن هذه القائمة كافة أسئلة الاختبار المعتمدة لتقييم استراتيجيات التعلم الذاتي والرقمي.</p>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="bg-white card-shadow p-6 md:p-10 rounded-2xl relative overflow-hidden border-t-4 border-t-c_exam">
+                <div class="absolute -right-10 -top-10 opacity-5 text-9xl text-c_exam"><i class="fa-solid fa-file-contract"></i></div>
+                
+                <div id="quiz-start" class="text-center relative z-10">
+                    <i class="fa-solid fa-brain text-6xl text-c_exam mb-6 animate-pulse"></i>
+                    <h3 class="text-2xl font-black text-text_main mb-2">التحدي النهائي</h3>
+                    <p class="text-sm text-text_muted mb-8">محاكي اختبار من 10 أسئلة مقتبسة حصرياً من بنك المادة.</p>
+                    <button onclick="startQuiz()" class="bg-c_exam text-white font-black px-10 py-4 rounded-xl hover:bg-red-700 transition-all shadow-md">
+                        بدء الاختبار
+                    </button>
+                </div>
+                
+                <div id="quiz-area" class="hidden relative z-10 min-h-[300px]">
+                    <div class="flex justify-between items-center mb-6 text-xs font-bold border-b border-slate-100 pb-4">
+                        <span id="q-counter" class="text-white bg-c_exam px-3 py-1 rounded-full shadow-sm">السؤال 1 / 10</span>
+                        <span id="q-type" class="text-text_muted bg-slate-100 px-3 py-1 rounded-full">نوع السؤال</span>
+                    </div>
+                    <h4 id="q-text" class="text-lg md:text-xl font-bold text-text_main mb-8 leading-relaxed">نص السؤال...</h4>
+                    <div id="q-options" class="space-y-3">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden text-center py-10 relative z-10">
+                    <h3 class="text-3xl font-black text-text_main mb-2">اكتمل التقييم!</h3>
+                    <p class="text-xl text-c_exam font-bold mb-6">النتيجة: <span id="final-score" class="text-4xl text-text_main">0</span> / 10</p>
+                    <div id="result-msg" class="text-sm text-text_muted mb-8 bg-slate-50 p-4 rounded-lg inline-block border border-slate-200"></div>
+                    <br>
+                    <button onclick="document.getElementById('quiz-result').classList.add('hidden'); document.getElementById('quiz-start').classList.remove('hidden');" class="bg-white text-text_main px-8 py-3 rounded-lg border border-slate-300 hover:border-c_exam hover:text-c_exam transition-all font-bold shadow-sm">
+                        إعادة الاختبار
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 pb-safe z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-between items-center px-1 py-3 max-w-3xl mx-auto">
+            <button onclick="switchTab('packages')" id="nav-packages" data-color="packages" class="nav-item active flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_packages transition-all">
+                <i class="fa-solid fa-suitcase text-lg"></i>
+                <span class="text-[10px] font-bold">الحقائب</span>
+            </button>
+            <button onclick="switchTab('modules')" id="nav-modules" data-color="modules" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_modules transition-all">
+                <i class="fa-solid fa-cubes text-lg"></i>
+                <span class="text-[10px] font-bold">الموديولات</span>
+            </button>
+            <button onclick="switchTab('digital')" id="nav-digital" data-color="digital" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_digital transition-all">
+                <i class="fa-solid fa-laptop-code text-lg"></i>
+                <span class="text-[10px] font-bold">الرقمي</span>
+            </button>
+            <button onclick="switchTab('summary')" id="nav-summary" data-color="summary" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_summary transition-all">
+                <i class="fa-solid fa-book-open text-lg"></i>
+                <span class="text-[10px] font-bold">الخلاصة</span>
+            </button>
+            <button onclick="switchTab('exam')" id="nav-exam" data-color="exam" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_exam transition-all">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+                <span class="text-[10px] font-bold">الامتحان</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // --- Gamification & UI Logic (Isolated keys for Teaching Course CH5) ---
+        let xp = parseInt(localStorage.getItem('teaching_xp_ch5')) || 0;
+        let lvl = parseInt(localStorage.getItem('teaching_lvl_ch5')) || 1;
+
+        function updateUI() {
+            if(document.getElementById('userXP')) document.getElementById('userXP').innerText = `${xp} XP`;
+            if(document.getElementById('userLevel')) document.getElementById('userLevel').innerText = lvl;
+            if(document.getElementById('xpBar')) document.getElementById('xpBar').style.width = `${xp % 100}%`;
+        }
+
+        function addXP(amount, message, color = '#06b6d4') {
+            xp += amount;
+            let newLvl = Math.floor(xp / 100) + 1;
+            
+            if(newLvl > lvl) { 
+                lvl = newLvl; 
+                showFloatingText('🎉 ارتقاء مستوى!', color); 
+            } else { 
+                showFloatingText(`+${amount} XP ${message}`, color); 
+            }
+            
+            // Save to LocalStorage
+            localStorage.setItem('teaching_xp_ch5', xp);
+            localStorage.setItem('teaching_lvl_ch5', lvl);
+            
+            updateUI();
+        }
+
+        function showFloatingText(text, color) {
+            const el = document.createElement('div');
+            el.className = 'xp-popup';
+            el.style.color = color;
+            el.innerText = text;
+            const x = window.innerWidth / 2 + (Math.random() * 60 - 30);
+            const y = window.innerHeight / 2;
+            el.style.left = `${x}px`; el.style.top = `${y}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1200);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const targetNav = document.getElementById(`nav-${tabId}`);
+            if(targetNav) targetNav.classList.add('active');
+
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // --- Active Recall Data ---
+        const recallData = {
+            1: [
+                { q: "ما هو الهدف من 'الاختبار القبلي' في الحقيبة التعليمية؟", a: "تحديد مستوى الطالب قبل البدء لمعرفة ما إذا كان يحتاج لدراسة الحقيبة أم يتقن مهاراتها بالفعل ليتم تحويله لمسار آخر." },
+                { q: "كيف يتحقق معيار 'الإتقان' في الحقائب التعليمية؟", a: "بأن لا ينتقل الطالب من نشاط أو مسار إلى آخر إلا بعد إتقان النشاط الحالي بنسبة معينة (غالباً 80% فأكثر)." }
+            ],
+            2: [
+                { q: "ما الذي يميز الموديول التعليمي عن الحقيبة التعليمية؟", a: "الموديول هو وحدة بناء صغيرة تركز على مهارة واحدة أو مفهوم محدد (وحدة الموضوع)، بينما الحقيبة نظام شامل قد يضم عدة موديولات." },
+                { q: "ماذا نقصد بأن الموديول 'نظام مغلق' (Self-contained)؟", a: "أي أنه يحتوي على أهدافه، وأنشطته، وأدوات تقويمه الخاصة المستقلة، بحيث يستطيع الطالب دراسته ذاتياً دون الحاجة للمعلم." }
+            ],
+            3: [
+                { q: "كيف يتم استغلال وقت المحاضرة في نمط 'الصف المقلوب'؟", a: "يُخصص وقت القاعة بالكامل للنقاش، حل المشكلات، والتطبيق العملي، بينما يتم تحصيل المعرفة النظرية ذاتياً قبل الحضور." },
+                { q: "ما هو التعلم غير المتزامن وما ميزته الرئيسية؟", a: "تعلم لا يشترط تواجد المعلم والطالب في نفس الوقت. ميزته أنه يمنح الطالب الحرية الكاملة في اختيار زمان ومكان التعلم." }
+            ]
+        };
+
+        // Render Active Recall
+        function renderRecallSections() {
+            Object.keys(recallData).forEach(secId => {
+                const container = document.getElementById(`recall-sec-${secId}`);
+                if(!container) return;
+                let html = '';
+                recallData[secId].forEach((item, idx) => {
+                    html += `
+                        <div class="bg-slate-50 p-3 rounded shadow-sm border border-slate-200 mb-2 cursor-pointer transition hover:bg-slate-100" onclick="toggleRecallAnswer(this)">
+                            <div class="text-sm font-bold text-text_main flex justify-between items-center">
+                                <span>${idx+1}. ${item.q}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                            </div>
+                            <div class="answer-content hidden mt-2 pt-2 border-t border-slate-200 text-[13px] text-emerald-600 font-medium leading-relaxed">
+                                ${item.a}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        let answeredRecalls = new Set();
+        function toggleRecallAnswer(el) {
+            const ans = el.querySelector('.answer-content');
+            const icon = el.querySelector('i.fa-solid');
+            
+            ans.classList.toggle('hidden');
+            
+            if(!ans.classList.contains('hidden')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                if(!answeredRecalls.has(el)) { 
+                    answeredRecalls.add(el); 
+                    addXP(5, 'تنشيط الذاكرة', '#8b5cf6'); 
+                }
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        }
+
+        // --- Quiz Engine (Exactly matching the 10 provided & derived questions) ---
+        const quizQuestions = [
+            { type: "صح وخطأ", q: "تعتمد الحقائب التعليمية في تصميمها على مبدأ (تفريد التعليم) لمراعاة الفروق الفردية بين الطلاب.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح. تتيح للمتعلم السير وفق سرعته وقدراته الخاصة من خلال تعدد المسارات والبدائل." },
+            { type: "صح وخطأ", q: "يُعد 'الاختبار القبلي' في الحقيبة التعليمية اختيارياً، ولا يؤثر على مسار الطالب التعليمي.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. الاختبار القبلي أساسي لتحديد مستوى الطالب وما إذا كان يحتاج لدراسة الحقيبة أم الانتقال لغيرها." },
+            { type: "صح وخطأ", q: "الموديول التعليمي هو وحدة دراسية كبيرة تغطي مقرراً كاملاً وتتسم بالعمومية.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. الموديول هو وحدة صغيرة، محددة، تركز على إتقان مهارة واحدة أو مفهوم محدد (وحدة الموضوع)." },
+            { type: "صح وخطأ", q: "يتيح التعلم الإلكتروني 'غير المتزامن' للطالب حرية اختيار زمان ومكان التعلم بما يناسب ظروفه.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح. لأنه لا يشترط تواجد المعلم والطلاب في نفس الوقت." },
+            { type: "صح وخطأ", q: "في نموذج 'الصف المقلوب'، يتم تخصيص وقت المحاضرة داخل القاعة لإلقاء الشرح النظري لأول مرة.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. وقت المحاضرة داخل القاعة يخصص للتطبيق والنقاش، بينما الشرح النظري يتم في المنزل عبر فيديو أو موديول." },
+            { type: "اختياري", q: "العنصر الذي يحدد للطالب كيفية البدء والمسارات التعليمية المتاحة داخل الحقيبة هو:", opts: ["الأنشطة", "الدليل", "الاختبار البعدي", "المراجع"], ans: 1, exp: "دليل الحقيبة هو الخارطة التي ترشد الطالب لاستخدام المصادر والمسارات." },
+            { type: "اختياري", q: "النمط التعليمي الذي يتطلب وجود المعلم والمتعلم في نفس الوقت رغم اختلاف المكان هو:", opts: ["التعلم المدمج", "التعلم غير المتزامن", "التعلم المتزامن", "الموديول التعليمي"], ans: 2, exp: "التعلم المتزامن (Synchronous) يحدث في نفس اللحظة عبر الفصول الافتراضية أو البث المباشر." },
+            { type: "اختياري", q: "يهدف 'التقويم البنائي' (التكويني) داخل الموديولات والحقائب التعليمية إلى:", opts: ["تحديد مستوى الطالب قبل البدء", "منح شهادة التخرج", "تقديم تغذية راجعة فورية أثناء التعلم", "ترتيب الطلاب تنافسياً"], ans: 2, exp: "التقويم البنائي يتخلل الأنشطة للتأكد من صحة مسار التعلم وتقديم التغذية الراجعة لمعالجة الأخطاء مبكراً." },
+            { type: "اختياري", q: "الاستراتيجية التي تدمج بين التعليم التقليدي (وجهاً لوجه) والتعليم عبر الإنترنت تسمى:", opts: ["التعلم النشط", "التعلم المدمج", "العصف الذهني", "التعلم المبرمج"], ans: 1, exp: "التعلم المدمج (Blended Learning) يجمع بين مزايا التعليم الصفي والتعليم الإلكتروني." },
+            { type: "مفاهيم عامة", q: "يتميز التعلم الإلكتروني (المتزامن) عن (غير المتزامن) بـ:", opts: ["أنه يمنح الطالب حرية مطلقة في اختيار وقت الدراسة", "توفير تفاعل لحظي وتغذية راجعة فورية بين المعلم والطلاب", "عدم الحاجة لوجود إنترنت", "أنه يلغي دور المعلم تماماً"], ans: 1, exp: "التفاعل اللحظي والحصول على إجابات فورية من المعلم هي الميزة التنافسية للتعلم المتزامن." }
+        ];
+
+        let currQ = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currQ = 0;
+            score = 0;
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-area').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizQuestions[currQ];
+            document.getElementById('q-counter').innerText = `السؤال ${currQ + 1} / ${quizQuestions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerText = q.q;
+            
+            const optsDiv = document.getElementById('q-options');
+            optsDiv.innerHTML = '';
+            
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-right p-4 rounded-xl border border-slate-200 bg-white hover:border-c_exam hover:bg-slate-50 transition-all text-sm font-bold text-text_main shadow-sm";
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(idx, btnNode) {
+            const q = quizQuestions[currQ];
+            const allBtns = document.getElementById('q-options').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+            
+            if(idx === q.ans) {
+                btnNode.classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                score++;
+                addXP(15, 'إجابة صحيحة!', '#10b981');
+            } else {
+                btnNode.classList.add('bg-red-50', 'border-red-400', 'text-red-700');
+                allBtns[q.ans].classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                addXP(0, 'تعلم من الخطأ', '#64748b');
+            }
+            
+            const expDiv = document.createElement('div');
+            expDiv.className = "mt-4 p-3 bg-indigo-50 border-r-4 border-c_exam rounded text-xs text-indigo-900 leading-relaxed";
+            expDiv.innerHTML = `<strong class="text-c_exam">التفسير:</strong> ${q.exp}`;
+            document.getElementById('q-options').appendChild(expDiv);
+            
+            setTimeout(() => {
+                currQ++;
+                if(currQ < quizQuestions.length) loadQuestion();
+                else showResults();
+            }, 3500);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-area').classList.add('hidden');
+            const resDiv = document.getElementById('quiz-result');
+            resDiv.classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            
+            let msg = "";
+            if(score === 10) msg = "علامة كاملة! لقد أتقنت استراتيجيات التعلم الذاتي والرقمي ببراعة. 👑";
+            else if(score >= 7) msg = "أداء ممتاز! فهمك لنموذج الصف المقلوب والموديولات قوي جداً. 🧠";
+            else msg = "تحتاج إلى مراجعة مكونات الحقائب وأنماط التعلم الإلكتروني ثم العودة للتحدي. 🔄";
+            
+            document.getElementById('result-msg').innerHTML = `<strong>${msg}</strong>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecallSections();
+            updateUI();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أكاديمية التدريس | الفصل الثالث: التعلم النشط</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        bg_light: '#f8fafc',       // خلفية مضيئة مريحة
+                        card_light: '#ffffff',     // كروت بيضاء نقية
+                        text_main: '#1e293b',      // نص أساسي للقراءة
+                        text_muted: '#64748b',     // نص ثانوي
+                        c_active: '#8b5cf6',       // بنفسجي: التعلم النشط
+                        c_collab: '#059669',       // أخضر: التعلم التعاوني
+                        c_creative: '#ea580c',     // برتقالي: العصف الذهني والأدوار
+                        c_summary: '#2563eb',      // أزرق: الخلاصة
+                        c_exam: '#dc2626',         // أحمر: الامتحان
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.04), transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(5, 150, 105, 0.04), transparent 25%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .view-section { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nav active states - Light Mode */
+        .nav-item.active { transform: translateY(-5px); font-weight: 800; }
+        .nav-item.active[data-color="active"] { color: #8b5cf6; }
+        .nav-item.active[data-color="collab"] { color: #059669; }
+        .nav-item.active[data-color="creative"] { color: #ea580c; }
+        .nav-item.active[data-color="summary"] { color: #2563eb; }
+        .nav-item.active[data-color="exam"] { color: #dc2626; }
+
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%;
+        }
+        .nav-item.active[data-color="active"]::after { background: #8b5cf6; }
+        .nav-item.active[data-color="collab"]::after { background: #059669; }
+        .nav-item.active[data-color="creative"]::after { background: #ea580c; }
+        .nav-item.active[data-color="summary"]::after { background: #2563eb; }
+        .nav-item.active[data-color="exam"]::after { background: #dc2626; }
+
+        .badge { font-size: 11px; padding: 4px 10px; border-radius: 9999px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; }
+
+        @keyframes floatUpXP { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.4); } }
+        .xp-popup { position: fixed; font-weight: 900; font-size: 1.5rem; pointer-events: none; z-index: 9999; animation: floatUpXP 1.2s ease-out forwards; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-header px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border border-slate-200 rounded-xl flex items-center justify-center font-space font-black text-white shadow-sm bg-gradient-to-br from-c_active to-c_creative">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-text_main text-sm md:text-base tracking-wide">أكاديمية المعلم | الفصل 3</h1>
+                    <div class="w-32 h-1.5 bg-slate-200 rounded-full mt-1 overflow-hidden">
+                        <div id="xpBar" class="h-full bg-gradient-to-r from-c_active to-c_collab transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border border-slate-200 px-3 py-1.5 rounded-full text-xs font-space font-bold tracking-wider flex items-center gap-2 text-text_main shadow-sm cursor-pointer hover:bg-slate-50 transition" onclick="addXP(5, 'طاقة إيجابية', '#8b5cf6')">
+                <i class="fa-solid fa-star text-yellow-500"></i>
+                <span id="userXP">0 XP</span>
+                <span class="text-slate-400 ml-1">| Lvl <span id="userLevel" class="text-c_active font-black">1</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 md:px-8 max-w-6xl mx-auto w-full">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: ACTIVE LEARNING (التعلم النشط) -->
+        <!-- ========================================== -->
+        <section id="tab-active" class="view-section active">
+            <div class="text-center mb-10">
+                <span class="badge bg-purple-100 text-c_active border border-purple-200 mb-3">ماهية وفلسفة</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">التعلم النشط (Active Learning)</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">فلسفة تربوية تنقل الثقل من المعلم للمتعلم؛ ليصبح مسؤولاً عن اكتساب معرفته بالعمل والتجريب.</p>
+            </div>
+
+            <!-- Concepts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-card_light rounded-2xl p-6 card-shadow border-t-4 border-t-c_active">
+                    <h4 class="font-bold text-text_main mb-3 flex items-center gap-2"><i class="fa-solid fa-brain text-c_active"></i> المفهوم المنضبط</h4>
+                    <p class="text-sm text-text_muted leading-relaxed">
+                        نمط يشرك الطلاب في عمل أشياء تجبرهم على التفكير فيما يتعلمونه؛ حيث لا يكتفون بالإنصات، بل يمارسون مهارات القراءة، الكتابة، المناقشة، وحل المشكلات بفاعلية ذهنية وحركية.
+                    </p>
+                </div>
+
+                <div class="bg-card_light rounded-2xl p-6 card-shadow border-t-4 border-t-c_active">
+                    <h4 class="font-bold text-text_main mb-3 flex items-center gap-2"><i class="fa-solid fa-chalkboard-user text-c_active"></i> دور المعلم (انحسار الإلقاء)</h4>
+                    <ul class="text-sm text-text_muted space-y-2 list-none">
+                        <li><i class="fa-solid fa-arrow-left text-c_active ml-2 text-xs"></i> <strong>المحفز:</strong> يثير التساؤلات والدافعية.</li>
+                        <li><i class="fa-solid fa-arrow-left text-c_active ml-2 text-xs"></i> <strong>الميسر:</strong> يذلل العقبات أمام المجموعات.</li>
+                        <li><i class="fa-solid fa-arrow-left text-c_active ml-2 text-xs"></i> <strong>المقوم:</strong> يتابع الأداء ويقدم تغذية راجعة فورية.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Principles -->
+            <h3 class="font-bold text-text_main mb-4"><i class="fa-solid fa-cubes text-c_active ml-2"></i> المبادئ والأسس الفلسفية</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-center hover:shadow-md transition">
+                    <i class="fa-solid fa-user-plus text-c_active text-2xl mb-2"></i>
+                    <strong class="block text-sm text-text_main">إيجابية المتعلم</strong>
+                    <p class="text-xs text-text_muted mt-1">مشارك في التخطيط والتنفيذ والتقويم.</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-center hover:shadow-md transition">
+                    <i class="fa-solid fa-layer-group text-c_active text-2xl mb-2"></i>
+                    <strong class="block text-sm text-text_main">تعدد المصادر</strong>
+                    <p class="text-xs text-text_muted mt-1">البحث في الوسائط والزملاء وليس الكتاب فقط.</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-center hover:shadow-md transition">
+                    <i class="fa-solid fa-arrow-up-right-dots text-c_active text-2xl mb-2"></i>
+                    <strong class="block text-sm text-text_main">التفكير المتمايز</strong>
+                    <p class="text-xs text-text_muted mt-1">التركيز على مهارات التفكير العليا كالتحليل والتقويم.</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-center hover:shadow-md transition">
+                    <i class="fa-solid fa-users text-c_active text-2xl mb-2"></i>
+                    <strong class="block text-sm text-text_main">التعلم الاجتماعي</strong>
+                    <p class="text-xs text-text_muted mt-1">يزداد التعلم عمقاً بالعمل الجماعي والتفاعل.</p>
+                </div>
+            </div>
+
+            <!-- Active Recall 1 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="1">
+                <h4 class="text-c_active font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-1"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: COLLABORATIVE (التعلم التعاوني) -->
+        <!-- ========================================== -->
+        <section id="tab-collab" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-green-100 text-c_collab border border-green-200 mb-3">معاً ننجح</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">التعلم التعاوني</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">تقسيم الطلاب لمجموعات صغيرة (4-6) غير متجانسة، يعملون معاً ويقاس نجاحهم بنجاح كل فرد.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <!-- Pillars -->
+                <div class="bg-white card-shadow rounded-2xl p-6 relative overflow-hidden">
+                    <div class="absolute -left-6 -bottom-6 text-8xl text-emerald-50 opacity-50"><i class="fa-solid fa-handshake-angle"></i></div>
+                    <h3 class="font-bold text-text_main mb-4 relative z-10"><i class="fa-solid fa-star text-c_collab ml-2"></i> الأركان الخمسة المنضبطة</h3>
+                    <ul class="space-y-3 text-sm relative z-10">
+                        <li class="bg-emerald-50 p-2 rounded border border-emerald-100">
+                            <strong class="text-c_collab block">1. الاعتماد المتبادل الإيجابي:</strong>
+                            <span class="text-text_muted">شعور بأن نجاح الفرد مرتبط بنجاح زملائه (نغرق معاً أو ننجو معاً).</span>
+                        </li>
+                        <li class="bg-emerald-50 p-2 rounded border border-emerald-100">
+                            <strong class="text-c_collab block">2. المسؤولية الفردية والجماعية:</strong>
+                            <span class="text-text_muted">كل فرد مسؤول عن إتقان المادة لضمان عدم الاتكال على الآخرين.</span>
+                        </li>
+                        <li class="bg-emerald-50 p-2 rounded border border-emerald-100">
+                            <strong class="text-c_collab block">3. التفاعل المباشر (وجهاً لوجه):</strong>
+                            <span class="text-text_muted">تبادل المصادر والشرح والبحث المشترك.</span>
+                        </li>
+                        <li class="bg-emerald-50 p-2 rounded border border-emerald-100">
+                            <strong class="text-c_collab block">4. المهارات الاجتماعية:</strong>
+                            <span class="text-text_muted">آداب الحوار، القيادة، واتخاذ القرار.</span>
+                        </li>
+                        <li class="bg-emerald-50 p-2 rounded border border-emerald-100">
+                            <strong class="text-c_collab block">5. معالجة عمل المجموعة:</strong>
+                            <span class="text-text_muted">تقييم الأداء (ماذا حققنا؟ كيف نتحسن؟).</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Roles & Advantages -->
+                <div class="space-y-6">
+                    <div class="bg-white card-shadow p-5 rounded-xl border-t-4 border-t-teal-500">
+                        <h4 class="font-bold text-text_main mb-3"><i class="fa-solid fa-users-gear text-teal-500 ml-2"></i> توزيع الأدوار</h4>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="border border-slate-100 p-2 rounded bg-slate-50">
+                                <strong class="text-text_main block">القائد / المنسق:</strong> <span class="text-xs text-text_muted">يدير الحوار والوقت.</span>
+                            </div>
+                            <div class="border border-slate-100 p-2 rounded bg-slate-50">
+                                <strong class="text-text_main block">المسجل / الكاتب:</strong> <span class="text-xs text-text_muted">يدون النتائج والقرارات.</span>
+                            </div>
+                            <div class="border border-slate-100 p-2 rounded bg-slate-50">
+                                <strong class="text-text_main block">الميقاتي:</strong> <span class="text-xs text-text_muted">يراقب الزمن وينبه.</span>
+                            </div>
+                            <div class="border border-slate-100 p-2 rounded bg-slate-50">
+                                <strong class="text-text_main block">المشجع:</strong> <span class="text-xs text-text_muted">يحفز المشاركة ويثني.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 shadow-sm">
+                        <h4 class="font-bold mb-2"><i class="fa-solid fa-medal text-emerald-600 ml-2"></i> مزايا التعلم التعاوني</h4>
+                        <ul class="list-disc list-inside space-y-1 text-xs">
+                            <li>رفع التحصيل وتنمية التفكير العليا.</li>
+                            <li>تقليل التوتر والقلق تجاه المادة.</li>
+                            <li>تنمية مهارات الاتصال والقيادة.</li>
+                            <li>مراعاة الفروق الفردية بتعليم الأقران.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 2 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="2">
+                <h4 class="text-c_collab font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-2"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: CREATIVE (استراتيجيات المشاركة والعصف) -->
+        <!-- ========================================== -->
+        <section id="tab-creative" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-orange-100 text-c_creative border border-orange-200 mb-3">الإبداع والمحاكاة</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">إستراتيجيات التشارك والعصف</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">من التفكير الفردي إلى المحاكاة الواقعية وانطلاق الطلاقة الفكرية.</p>
+            </div>
+
+            <div class="space-y-8 mb-8">
+                <!-- Think-Pair-Share -->
+                <div class="bg-white card-shadow rounded-2xl p-6 border-r-4 border-r-blue-500">
+                    <h3 class="text-lg font-bold text-text_main mb-2"><i class="fa-solid fa-people-arrows text-blue-500 ml-2"></i> 1. إستراتيجية (شارك - زاوج - فكر)</h3>
+                    <p class="text-sm text-text_muted leading-relaxed">
+                        هي الأداة السحرية لضمان إشراك كافة الطلاب في القاعات المزدحمة. تمنح الطالب <strong>المعالجة الذهنية المستقلة</strong> وفرصة التفكير المنفرد قبل الاندماج ومناقشة الأفكار مع زميله ثم مع الفصل بأكمله.
+                    </p>
+                </div>
+
+                <!-- Role Play -->
+                <div class="bg-white card-shadow rounded-2xl p-6 border-r-4 border-r-c_creative">
+                    <h3 class="text-lg font-bold text-text_main mb-4"><i class="fa-solid fa-masks-theater text-c_creative ml-2"></i> 2. إستراتيجية لعب الأدوار (Role Playing)</h3>
+                    <p class="text-sm text-text_muted mb-4">المحاكاة وتجسيد مواقف ملموسة لتحويل المادة من نصوص جافة لخبرات حية.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-orange-50 p-3 rounded-lg border border-orange-100 text-sm">
+                            <strong class="text-c_creative block mb-2">منهجية التنفيذ:</strong>
+                            <ol class="list-decimal list-inside text-xs text-text_muted space-y-1">
+                                <li>تأسيس الموقف واختيار المشكلة.</li>
+                                <li>اختيار الممثلين المتطوعين.</li>
+                                <li>تهيئة مسرح الفصل للموقف.</li>
+                                <li>المراقبة والتدوين من بقية الطلاب.</li>
+                                <li><strong>المناقشة والتقويم</strong> للدروس المستفادة.</li>
+                            </ol>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded-lg border border-orange-100 text-sm">
+                            <strong class="text-c_creative block mb-2">القيمة التربوية:</strong>
+                            <ul class="list-disc list-inside text-xs text-text_muted space-y-1">
+                                <li>تنمية <strong>الذكاء الوجداني</strong> وتقمص مشاعر الآخرين.</li>
+                                <li>كسر الجمود وعلاج الخجل المفرط.</li>
+                                <li>التدريب العملي وممارسة المهنة في بيئة آمنة.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brainstorming -->
+                <div class="bg-white card-shadow rounded-2xl p-6 border-r-4 border-r-yellow-500 relative overflow-hidden">
+                    <div class="absolute -left-4 -bottom-4 text-7xl text-yellow-50 opacity-50"><i class="fa-solid fa-lightbulb"></i></div>
+                    <h3 class="text-lg font-bold text-text_main mb-4 relative z-10"><i class="fa-solid fa-cloud-bolt text-yellow-500 ml-2"></i> 3. العصف الذهني (Brainstorming)</h3>
+                    <p class="text-sm text-text_muted mb-4 relative z-10">استثارة عقول الطلاب لإنتاج أكبر عدد من الأفكار في مناخ يسوده الحرية.</p>
+                    
+                    <h4 class="font-bold text-text_main text-sm mb-2 relative z-10">القواعد الذهبية الأربع للنجاح:</h4>
+                    <div class="grid grid-cols-2 gap-3 text-sm relative z-10">
+                        <div class="border border-slate-200 p-2 rounded bg-white shadow-sm">
+                            <strong class="text-yellow-600 block"><i class="fa-solid fa-ban text-xs ml-1"></i> تأجيل النقد:</strong>
+                            <span class="text-xs text-text_muted">يمنع السخرية أو التقييم في مرحلة التوليد لكسر الخوف.</span>
+                        </div>
+                        <div class="border border-slate-200 p-2 rounded bg-white shadow-sm">
+                            <strong class="text-yellow-600 block"><i class="fa-solid fa-dove text-xs ml-1"></i> الحرية الفكرية:</strong>
+                            <span class="text-xs text-text_muted">الترحيب بالأفكار الغريبة والتحليق بالخيال.</span>
+                        </div>
+                        <div class="border border-slate-200 p-2 rounded bg-white shadow-sm">
+                            <strong class="text-yellow-600 block"><i class="fa-solid fa-arrow-trend-up text-xs ml-1"></i> الكم يولد الكيف:</strong>
+                            <span class="text-xs text-text_muted">جمع أكبر عدد ممكن لاستخراج الإبداع.</span>
+                        </div>
+                        <div class="border border-slate-200 p-2 rounded bg-white shadow-sm">
+                            <strong class="text-yellow-600 block"><i class="fa-solid fa-plus text-xs ml-1"></i> البناء على أفكار الآخرين:</strong>
+                            <span class="text-xs text-text_muted">دمج وتطوير أفكار الزملاء بحرية.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 3 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="3">
+                <h4 class="text-c_creative font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-3"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: SUMMARY (الخلاصة) -->
+        <!-- ========================================== -->
+        <section id="tab-summary" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-blue-100 text-c_summary border border-blue-200 mb-3">ربط المفاهيم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">النشاط والتفاعل التشاركي</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">إحداث تحول جوهري من الفردية إلى التشاركية ومن السكون إلى الحركة الذهنية.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_active">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-brain text-c_active ml-2"></i> فلسفة التعلم النشط</h3>
+                    <p class="text-sm text-text_muted">المظلة الكبرى التي تجعل المتعلم هو "صانع الخبرة" وليس مخزناً للمعلومات، لتركز على عمليات التفكير العليا.</p>
+                </div>
+                
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_collab">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-handshake text-c_collab ml-2"></i> ديناميكية التعاون</h3>
+                    <p class="text-sm text-text_muted">ينجح العمل الجماعي فقط بتحقق "الأركان الخمسة" وعلى رأسها الاعتماد المتبادل الإيجابي؛ المجموعة تنجح بنجاح أصغرها.</p>
+                </div>
+
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_creative">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-masks-theater text-c_creative ml-2"></i> محاكاة لعب الأدوار</h3>
+                    <p class="text-sm text-text_muted">وسيلة قوية لتحويل المفاهيم لعبرات معاشة تنمي الذكاء الوجداني والاجتماعي.</p>
+                </div>
+
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-yellow-500">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-cloud-bolt text-yellow-500 ml-2"></i> انطلاق العصف الذهني</h3>
+                    <p class="text-sm text-text_muted">كسر القوالب بـ "فصل التوليد عن التقييم" لضمان تدفق الأفكار الإبداعية والطلاقة الفكرية.</p>
+                </div>
+            </div>
+            
+            <!-- Final Note -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center text-blue-800 font-bold shadow-sm">
+                الهدف من تنويع الإستراتيجيات ليس الترفيه، بل الوصول لمخرجات تتسم بالبقاء وتنمية مهارات القرن الحادي والعشرين للميدان!
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: EXAM (الامتحان) -->
+        <!-- ========================================== -->
+        <section id="tab-exam" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-red-100 text-c_exam border border-red-200 mb-3">اختبار الفصل الثالث</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">بنك الأسئلة الشامل</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">اختبر استيعابك للمفاهيم، التعاون، والمحاكاة.</p>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="bg-white card-shadow p-6 md:p-10 rounded-2xl relative overflow-hidden border-t-4 border-t-c_exam">
+                <div class="absolute -right-10 -top-10 opacity-5 text-9xl text-c_exam"><i class="fa-solid fa-gamepad"></i></div>
+                
+                <div id="quiz-start" class="text-center relative z-10">
+                    <i class="fa-solid fa-brain text-6xl text-c_exam mb-6 animate-pulse"></i>
+                    <h3 class="text-2xl font-black text-text_main mb-2">التحدي النهائي</h3>
+                    <p class="text-sm text-text_muted mb-8">محاكي اختبار من 10 أسئلة تضم كافة أسئلة المنهج المعتمدة.</p>
+                    <button onclick="startQuiz()" class="bg-c_exam text-white font-black px-10 py-4 rounded-xl hover:bg-red-700 transition-all shadow-md">
+                        بدء الاختبار
+                    </button>
+                </div>
+                
+                <div id="quiz-area" class="hidden relative z-10 min-h-[300px]">
+                    <div class="flex justify-between items-center mb-6 text-xs font-bold border-b border-slate-100 pb-4">
+                        <span id="q-counter" class="text-white bg-c_exam px-3 py-1 rounded-full shadow-sm">السؤال 1 / 10</span>
+                        <span id="q-type" class="text-text_muted bg-slate-100 px-3 py-1 rounded-full">نوع السؤال</span>
+                    </div>
+                    <h4 id="q-text" class="text-lg md:text-xl font-bold text-text_main mb-8 leading-relaxed">نص السؤال...</h4>
+                    <div id="q-options" class="space-y-3">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden text-center py-10 relative z-10">
+                    <h3 class="text-3xl font-black text-text_main mb-2">اكتمل التقييم!</h3>
+                    <p class="text-xl text-c_exam font-bold mb-6">النتيجة: <span id="final-score" class="text-4xl text-text_main">0</span> / 10</p>
+                    <div id="result-msg" class="text-sm text-text_muted mb-8 bg-slate-50 p-4 rounded-lg inline-block border border-slate-200"></div>
+                    <br>
+                    <button onclick="document.getElementById('quiz-result').classList.add('hidden'); document.getElementById('quiz-start').classList.remove('hidden');" class="bg-white text-text_main px-8 py-3 rounded-lg border border-slate-300 hover:border-c_exam hover:text-c_exam transition-all font-bold shadow-sm">
+                        إعادة الاختبار
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 pb-safe z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-between items-center px-1 py-3 max-w-3xl mx-auto">
+            <button onclick="switchTab('active')" id="nav-active" data-color="active" class="nav-item active flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_active transition-all">
+                <i class="fa-solid fa-bolt text-lg"></i>
+                <span class="text-[10px] font-bold">النشط</span>
+            </button>
+            <button onclick="switchTab('collab')" id="nav-collab" data-color="collab" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_collab transition-all">
+                <i class="fa-solid fa-handshake text-lg"></i>
+                <span class="text-[10px] font-bold">التعاوني</span>
+            </button>
+            <button onclick="switchTab('creative')" id="nav-creative" data-color="creative" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_creative transition-all">
+                <i class="fa-solid fa-lightbulb text-lg"></i>
+                <span class="text-[10px] font-bold">الإبداع</span>
+            </button>
+            <button onclick="switchTab('summary')" id="nav-summary" data-color="summary" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_summary transition-all">
+                <i class="fa-solid fa-book-open text-lg"></i>
+                <span class="text-[10px] font-bold">الخلاصة</span>
+            </button>
+            <button onclick="switchTab('exam')" id="nav-exam" data-color="exam" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_exam transition-all">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+                <span class="text-[10px] font-bold">الامتحان</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // --- Gamification & UI Logic (Isolated keys for Teaching Course CH3) ---
+        let xp = parseInt(localStorage.getItem('teaching_xp_ch3')) || 0;
+        let lvl = parseInt(localStorage.getItem('teaching_lvl_ch3')) || 1;
+
+        function updateUI() {
+            if(document.getElementById('userXP')) document.getElementById('userXP').innerText = `${xp} XP`;
+            if(document.getElementById('userLevel')) document.getElementById('userLevel').innerText = lvl;
+            if(document.getElementById('xpBar')) document.getElementById('xpBar').style.width = `${xp % 100}%`;
+        }
+
+        function addXP(amount, message, color = '#8b5cf6') {
+            xp += amount;
+            let newLvl = Math.floor(xp / 100) + 1;
+            
+            if(newLvl > lvl) { 
+                lvl = newLvl; 
+                showFloatingText('🎉 ارتقاء مستوى!', color); 
+            } else { 
+                showFloatingText(`+${amount} XP ${message}`, color); 
+            }
+            
+            // Save to LocalStorage
+            localStorage.setItem('teaching_xp_ch3', xp);
+            localStorage.setItem('teaching_lvl_ch3', lvl);
+            
+            updateUI();
+        }
+
+        function showFloatingText(text, color) {
+            const el = document.createElement('div');
+            el.className = 'xp-popup';
+            el.style.color = color;
+            el.innerText = text;
+            const x = window.innerWidth / 2 + (Math.random() * 60 - 30);
+            const y = window.innerHeight / 2;
+            el.style.left = `${x}px`; el.style.top = `${y}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1200);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const targetNav = document.getElementById(`nav-${tabId}`);
+            if(targetNav) targetNav.classList.add('active');
+
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // --- Active Recall Data ---
+        const recallData = {
+            1: [
+                { q: "كيف تغير دور المعلم في فلسفة التعلم النشط؟", a: "انحسر دوره عن مجرد 'الإلقاء والتلقين' وتوسع ليكون محفزاً يثير التساؤلات، ميسراً يذلل العقبات، ومقوماً يقدم التغذية الراجعة." },
+                { q: "ما هو 'التفكير المتمايز' في التعلم النشط؟", a: "هو التركيز على مهارات التفكير العليا (كالتحليل والتركيب والتقويم) بدلاً من مهارات التذكر البسيطة." }
+            ],
+            2: [
+                { q: "ما المقصود بـ 'الاعتماد المتبادل الإيجابي'؟", a: "هو شعور كل طالب في المجموعة أن نجاحه الشخصي مرتبط ارتباطاً وثيقاً بنجاح زملائه (نغرق معاً أو ننجو معاً)." },
+                { q: "لماذا توزع الأدوار داخل مجموعات التعلم التعاوني؟", a: "لضمان انخراط جميع أفراد المجموعة بفاعلية، ومنع اتكال البعض على الآخرين، وتنمية مهارات اجتماعية وقيادية متنوعة." }
+            ],
+            3: [
+                { q: "لماذا تمنع السخرية أو التقييم في مرحلة 'توليد الأفكار' بالعصف الذهني؟", a: "لكسر حواجز الخوف والتردد لدى الطلاب، وضمان تدفق أكبر كمية من الأفكار الإبداعية دون قيود (تأجيل النقد)." },
+                { q: "ما هي الأهمية الوجدانية لاستراتيجية 'لعب الأدوار'؟", a: "تدرب الطالب على فهم مشاعر الآخرين ووجهات نظرهم من خلال تقمص أدوارهم (الذكاء الوجداني)، وتساعد في كسر الخجل." }
+            ]
+        };
+
+        // Render Active Recall (Light Mode Adaptation)
+        function renderRecallSections() {
+            Object.keys(recallData).forEach(secId => {
+                const container = document.getElementById(`recall-sec-${secId}`);
+                if(!container) return;
+                let html = '';
+                recallData[secId].forEach((item, idx) => {
+                    html += `
+                        <div class="bg-slate-50 p-3 rounded shadow-sm border border-slate-200 mb-2 cursor-pointer transition hover:bg-slate-100" onclick="toggleRecallAnswer(this)">
+                            <div class="text-sm font-bold text-text_main flex justify-between items-center">
+                                <span>${idx+1}. ${item.q}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                            </div>
+                            <div class="answer-content hidden mt-2 pt-2 border-t border-slate-200 text-[13px] text-emerald-600 font-medium leading-relaxed">
+                                ${item.a}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        let answeredRecalls = new Set();
+        function toggleRecallAnswer(el) {
+            const ans = el.querySelector('.answer-content');
+            const icon = el.querySelector('i.fa-solid');
+            
+            ans.classList.toggle('hidden');
+            
+            if(!ans.classList.contains('hidden')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                if(!answeredRecalls.has(el)) { 
+                    answeredRecalls.add(el); 
+                    addXP(5, 'تنشيط الذاكرة', '#ea580c'); 
+                }
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        }
+
+        // --- Quiz Engine (10 Questions included exactly as provided) ---
+        const quizQuestions = [
+            { type: "صح وخطأ", q: "في التعلم النشط، يقتصر دور المعلم على الإلقاء بينما يقتصر دور المتعلم على تدوين الملحوظات.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. التعلم النشط ينقل الثقل للمتعلم ليشارك ويبحث، بينما يكون المعلم محفزاً وميسراً." },
+            { type: "صح وخطأ", q: "يُقصد بـ (الاعتماد المتبادل الإيجابي) أن يدرك كل عضو في المجموعة أن نجاحه مرتبط بنجاح زملائه.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح. هو الركن الأساسي الذي يحفز الطلاب على التعاون (نغرق معاً أو ننجو معاً)." },
+            { type: "صح وخطأ", q: "إستراتيجية (فكر- زاوج - شارك) تُعد حلاً فعالاً لإشراك جميع الطلاب في القاعات الدراسية المزدحمة.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح. تمنح الفرصة لكل طالب للتفكير الفردي قبل دمج الأفكار جماعياً." },
+            { type: "صح وخطأ", q: "يُسمح بنقد الأفكار والسخرية منها خلال مرحلة (توليد الأفكار) في جلسة العصف الذهني.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. يجب 'تأجيل النقد' تماماً في مرحلة التوليد لكسر حاجز الخوف والتردد." },
+            { type: "صح وخطأ", q: "في إستراتيجية لعب الأدوار، يعتبر الملاحظون من الطلاب عنصراً غير مؤثر في الموقف التعليمي.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. الملاحظون هم من يراقبون ويدونون نقاط القوة والضعف لتتم مناقشتها وتقويمها." },
+            { type: "اختياري", q: "الركن الذي يضمن عدم اتكال الطلاب على بعضهم البعض داخل المجموعة التعاونية هو:", opts: ["المهارات الاجتماعية", "المسؤولية الفردية", "التفاعل المباشر", "معالجة عمل المجموعة"], ans: 1, exp: "المسؤولية الفردية والجماعية تضمن تقييم الفرد والمجموعة لمنع الاتكالية." },
+            { type: "اختياري", q: "المرحلة التي تمنح الطالب فرصة (المعالجة الذهنية المستقلة) قبل النقاش مع الأقران هي مرحلة:", opts: ["شارك", "زاوج", "فكر", "العصف الذهني"], ans: 2, exp: "مرحلة 'فكر' (Think) هي وقت مخصص ليفكر الطالب بمفرده في الإجابة." },
+            { type: "اختياري", q: "القاعدة التي تنص على أن (الكم يولد الكيف) هي إحدى القواعد الأساسية لإستراتيجية:", opts: ["لعب الأدوار", "التعلم التعاوني", "العصف الذهني", "الحقائب التعليمية"], ans: 2, exp: "في العصف الذهني، التركيز يكون على عدد الأفكار لأن الكم يفرز الإبداع." },
+            { type: "اختياري", q: "الدور الذي يقوم بمراقبة الزمن وضمان سير المجموعة وفق الوقت المحدد في التعلم التعاوني هو:", opts: ["المسجل", "الميقاتي", "القائد", "المشجع"], ans: 1, exp: "الميقاتي (Timekeeper) مسؤوليته إدارة ومراقبة الوقت المحدد للمهمة." },
+            { type: "مفاهيم عامة", q: "تتكون مجموعات التعلم التعاوني الفعالة (غير المتجانسة) عادة من:", opts: ["طالبين إلى ثلاثة", "4 إلى 6 طلاب", "10 إلى 15 طالباً", "أكثر من 20 طالباً"], ans: 1, exp: "المجموعة المثالية تتراوح بين 4 إلى 6 طلاب لضمان فاعلية التفاعل وتوزيع الأدوار." }
+        ];
+
+        let currQ = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currQ = 0;
+            score = 0;
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-area').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizQuestions[currQ];
+            document.getElementById('q-counter').innerText = `السؤال ${currQ + 1} / ${quizQuestions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerText = q.q;
+            
+            const optsDiv = document.getElementById('q-options');
+            optsDiv.innerHTML = '';
+            
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                // Light mode button styling
+                btn.className = "w-full text-right p-4 rounded-xl border border-slate-200 bg-white hover:border-c_exam hover:bg-slate-50 transition-all text-sm font-bold text-text_main shadow-sm";
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(idx, btnNode) {
+            const q = quizQuestions[currQ];
+            const allBtns = document.getElementById('q-options').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+            
+            if(idx === q.ans) {
+                btnNode.classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                score++;
+                addXP(15, 'إجابة صحيحة!', '#059669');
+            } else {
+                btnNode.classList.add('bg-red-50', 'border-red-400', 'text-red-700');
+                allBtns[q.ans].classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                addXP(0, 'تعلم من الخطأ', '#64748b');
+            }
+            
+            const expDiv = document.createElement('div');
+            expDiv.className = "mt-4 p-3 bg-blue-50 border-r-4 border-c_exam rounded text-xs text-blue-900 leading-relaxed";
+            expDiv.innerHTML = `<strong class="text-c_exam">التفسير:</strong> ${q.exp}`;
+            document.getElementById('q-options').appendChild(expDiv);
+            
+            setTimeout(() => {
+                currQ++;
+                if(currQ < quizQuestions.length) loadQuestion();
+                else showResults();
+            }, 3500);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-area').classList.add('hidden');
+            const resDiv = document.getElementById('quiz-result');
+            resDiv.classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            
+            let msg = "";
+            if(score === 10) msg = "أداء أسطوري! لقد أحكمت فهمك للتعلم النشط والتشاركي. 👑";
+            else if(score >= 7) msg = "أداء ممتاز! استيعابك للاستراتيجيات التدريسية قوي جداً. 🧠";
+            else msg = "تحتاج إلى مراجعة قواعد العصف الذهني وأركان التعاون والعودة. 🔄";
+            
+            document.getElementById('result-msg').innerHTML = `<strong>${msg}</strong>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecallSections();
+            updateUI();
+        });
+    </script>
+</body>
+</html>

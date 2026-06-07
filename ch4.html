@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أكاديمية التدريس | الفصل الرابع: ما وراء المعرفة والبنائية</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        bg_light: '#f8fafc',       
+                        card_light: '#ffffff',     
+                        text_main: '#1e293b',      
+                        text_muted: '#64748b',     
+                        c_meta: '#6366f1',         // نيلي: ما وراء المعرفة (عمق التفكير)
+                        c_visual: '#f59e0b',       // عنبري: المنظمات البصرية
+                        c_cycle: '#10b981',        // زمردي: دورة التعلم (النمو)
+                        c_summary: '#3b82f6',      // أزرق: الخلاصة
+                        c_exam: '#ef4444',         // أحمر: الامتحان
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.04), transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.04), transparent 25%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .view-section { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nav active states */
+        .nav-item.active { transform: translateY(-5px); font-weight: 800; }
+        .nav-item.active[data-color="meta"] { color: #6366f1; }
+        .nav-item.active[data-color="visual"] { color: #f59e0b; }
+        .nav-item.active[data-color="cycle"] { color: #10b981; }
+        .nav-item.active[data-color="summary"] { color: #3b82f6; }
+        .nav-item.active[data-color="exam"] { color: #ef4444; }
+
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%;
+        }
+        .nav-item.active[data-color="meta"]::after { background: #6366f1; }
+        .nav-item.active[data-color="visual"]::after { background: #f59e0b; }
+        .nav-item.active[data-color="cycle"]::after { background: #10b981; }
+        .nav-item.active[data-color="summary"]::after { background: #3b82f6; }
+        .nav-item.active[data-color="exam"]::after { background: #ef4444; }
+
+        .badge { font-size: 11px; padding: 4px 10px; border-radius: 9999px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; }
+
+        @keyframes floatUpXP { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.4); } }
+        .xp-popup { position: fixed; font-weight: 900; font-size: 1.5rem; pointer-events: none; z-index: 9999; animation: floatUpXP 1.2s ease-out forwards; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-header px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border border-slate-200 rounded-xl flex items-center justify-center font-space font-black text-white shadow-sm bg-gradient-to-br from-c_meta to-c_visual">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-text_main text-sm md:text-base tracking-wide">أكاديمية المعلم | الفصل 4</h1>
+                    <div class="w-32 h-1.5 bg-slate-200 rounded-full mt-1 overflow-hidden">
+                        <div id="xpBar" class="h-full bg-gradient-to-r from-c_meta to-c_visual transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border border-slate-200 px-3 py-1.5 rounded-full text-xs font-space font-bold tracking-wider flex items-center gap-2 text-text_main shadow-sm cursor-pointer hover:bg-slate-50 transition" onclick="addXP(5, 'تفقد النظام', '#6366f1')">
+                <i class="fa-solid fa-star text-yellow-500"></i>
+                <span id="userXP">0 XP</span>
+                <span class="text-slate-400 ml-1">| Lvl <span id="userLevel" class="text-c_meta font-black">1</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 md:px-8 max-w-6xl mx-auto w-full">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: METACOGNITION (ما وراء المعرفة والتدريس التبادلي) -->
+        <!-- ========================================== -->
+        <section id="tab-meta" class="view-section active">
+            <div class="text-center mb-10">
+                <span class="badge bg-indigo-100 text-c_meta border border-indigo-200 mb-3">التفكير في التفكير</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">إستراتيجيات ما وراء المعرفة</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">أرقى مستويات النشاط العقلي؛ حيث لا يركز الطالب فقط على "ماذا" يتعلم، بل على "كيف" يتعلم.</p>
+            </div>
+
+            <!-- Metacognition Concepts -->
+            <div class="bg-white card-shadow rounded-2xl p-6 mb-8 border-t-4 border-t-c_meta relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-8xl text-indigo-50 opacity-50"><i class="fa-solid fa-brain"></i></div>
+                <h3 class="text-xl font-bold text-text_main mb-4 relative z-10"><i class="fa-solid fa-gears text-c_meta ml-2"></i> جوهر ما وراء المعرفة (Metacognition)</h3>
+                <p class="text-sm text-text_muted mb-6 relative z-10">
+                    قدرة المتعلم على التخطيط لمهمة التعلم، ومراقبة استيعابه أثناء التنفيذ، ثم تقييم مدى نجاحه. إنها تجعل الطالب <strong>مراقباً لذاته الفكرية</strong>.
+                </p>
+                
+                <h4 class="font-bold text-text_main text-sm mb-3 relative z-10">المهارات الأساسية الثلاث:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10 text-sm">
+                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+                        <strong class="text-c_meta block mb-1">1. التخطيط</strong>
+                        <span class="text-text_muted text-xs">تحديد الأهداف والخطوات قبل البدء (كيف سأبدأ دراسة هذا الفصل؟).</span>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+                        <strong class="text-c_meta block mb-1">2. المراقبة والتنظيم</strong>
+                        <span class="text-text_muted text-xs">سؤال النفس أثناء العمل (هل أفهم ما أقرأ؟ هل أحتاج لتغيير طريقتي؟).</span>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+                        <strong class="text-c_meta block mb-1">3. التقييم</strong>
+                        <span class="text-text_muted text-xs">فحص النتائج بعد الانتهاء (هل حققت الهدف؟ ما نقاط قوتي وضعفي؟).</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reciprocal Teaching -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8">
+                <h3 class="text-xl font-bold text-text_main mb-4"><i class="fa-solid fa-retweet text-c_meta ml-2"></i> التدريس التبادلي (Reciprocal Teaching)</h3>
+                <p class="text-sm text-text_muted mb-6">تطبيق عملي لما وراء المعرفة، حيث يتبادل المعلم والطلاب الأدوار في قيادة الحوار التعليمي عبر <strong>أربع مهارات</strong> متسلسلة:</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-sm">
+                    <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                        <i class="fa-solid fa-eye text-2xl text-slate-400 mb-2"></i>
+                        <strong class="text-text_main block">1. التنبؤ</strong>
+                        <span class="text-[10px] text-text_muted">تخمين المحتوى من العناوين والصور.</span>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                        <i class="fa-solid fa-circle-question text-2xl text-slate-400 mb-2"></i>
+                        <strong class="text-text_main block">2. التساؤل</strong>
+                        <span class="text-[10px] text-text_muted">طرح أسئلة عميقة حول الأفكار.</span>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass text-2xl text-slate-400 mb-2"></i>
+                        <strong class="text-text_main block">3. التوضيح</strong>
+                        <span class="text-[10px] text-text_muted">تحديد الكلمات الصعبة ومحاولة فهمها.</span>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                        <i class="fa-solid fa-list-check text-2xl text-slate-400 mb-2"></i>
+                        <strong class="text-text_main block">4. التلخيص</strong>
+                        <span class="text-[10px] text-text_muted">صياغة المعنى الإجمالي بإيجاز.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 1 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="1">
+                <h4 class="text-c_meta font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-1"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: VISUAL ORGANIZERS (المنظمات التخطيطية المتقدمة) -->
+        <!-- ========================================== -->
+        <section id="tab-visual" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-amber-100 text-c_visual border border-amber-200 mb-3">الهندسة البصرية</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">المنظمات التخطيطية والبنائية</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">أدوات بصرية تربط بين المعرفة السابقة والجديدة، وهي جوهر التعلم البنائي.</p>
+            </div>
+
+            <div class="space-y-6 mb-8">
+                <!-- Fishbone Diagram -->
+                <div class="bg-white card-shadow rounded-2xl p-6 border-r-4 border-r-amber-500 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-text_main mb-2"><i class="fa-solid fa-fish text-amber-500 ml-2"></i> مخطط عظم السمكة (Ishikawa)</h3>
+                        <p class="text-sm text-text_muted mb-3">مخطط "السبب والنتيجة". أداة بصرية تُستخدم لتحليل المشكلات وتفكيكها إلى عناصرها الصغرى.</p>
+                        <ul class="text-xs text-text_main space-y-1 bg-amber-50 p-3 rounded-lg border border-amber-100">
+                            <li><strong>رأس السمكة:</strong> يمثل المشكلة الأساسية أو الظاهرة.</li>
+                            <li><strong>العظام الجانبية:</strong> تمثل الأسباب الرئيسية ويتفرع منها عظام أصغر للأسباب الفرعية.</li>
+                        </ul>
+                    </div>
+                    <div class="w-full md:w-1/3 text-center">
+                        <div class="bg-amber-100 p-4 rounded-xl border border-amber-200 text-amber-800 text-xs font-bold shadow-inner">
+                            القيمة التربوية:<br><span class="font-normal">ينمي مهارات التحليل المنطقي والشمولية في حصر كافة العوامل المؤثرة بقضية ما.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- V-Shape -->
+                <div class="bg-white card-shadow rounded-2xl p-6 border-r-4 border-r-blue-500">
+                    <h3 class="text-xl font-bold text-text_main mb-3"><i class="fa-solid fa-v text-blue-500 ml-2"></i> إستراتيجية الشكل (V)</h3>
+                    <p class="text-sm text-text_muted mb-4">تهدف لمساعدة الطلاب على فهم طبيعة العلم، والربط بين الجانب النظري والعملي الإجرائي.</p>
+                    
+                    <div class="flex justify-center items-end gap-2 mb-2">
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg w-1/3 text-center transform -skew-y-6">
+                            <strong class="block text-blue-700 text-xs mb-1">الجانب الأيسر (النظري)</strong>
+                            <span class="text-[10px] text-text_muted">الفلسفة، النظريات، المبادئ والمفاهيم.</span>
+                        </div>
+                        <div class="bg-slate-100 border border-slate-300 p-2 rounded-lg text-center text-xs font-bold self-end mb-2">
+                            سؤال الاستقصاء
+                        </div>
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg w-1/3 text-center transform skew-y-6">
+                            <strong class="block text-blue-700 text-xs mb-1">الجانب الأيمن (الإجرائي)</strong>
+                            <span class="text-[10px] text-text_muted">الأدوات، الخطوات، والنتائج التجريبية.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Concept Maps -->
+                <div class="bg-white card-shadow rounded-2xl p-6 border-r-4 border-r-emerald-500">
+                    <h3 class="text-xl font-bold text-text_main mb-2"><i class="fa-solid fa-sitemap text-emerald-500 ml-2"></i> خرائط المفاهيم (Concept Maps)</h3>
+                    <p class="text-sm text-text_muted mb-3">تمثيل بصري صممه "نوفاك" يوضح كيفية ترابط المفاهيم داخل عقل المتعلم <strong>من العام إلى الخاص</strong> (هرمياً).</p>
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs text-text_main flex justify-around">
+                        <span><i class="fa-solid fa-check text-emerald-500"></i> المفهوم الرئيسي</span>
+                        <span><i class="fa-solid fa-check text-emerald-500"></i> المفاهيم الفرعية</span>
+                        <span><i class="fa-solid fa-check text-emerald-500"></i> كلمات الربط</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 2 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="2">
+                <h4 class="text-c_visual font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-2"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: LEARNING CYCLE (دورة التعلم) -->
+        <!-- ========================================== -->
+        <section id="tab-cycle" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-emerald-100 text-c_cycle border border-emerald-200 mb-3">مسار بياجيه المعرفي</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">دورة التعلم (5Es)</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">نموذج تدريسي يعتمد على مرور المتعلم بمراحل متسلسلة تبدأ بالاكتشاف قبل تقديم الشرح العلمي.</p>
+            </div>
+
+            <!-- The 5 Es -->
+            <div class="bg-white card-shadow rounded-2xl p-6 mb-8 relative">
+                <div class="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-c_cycle to-emerald-200 hidden md:block"></div>
+                
+                <div class="space-y-6 md:pr-4">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-c_cycle flex justify-center items-center font-black shrink-0 border-2 border-emerald-200 z-10">1</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-text_main">الإثارة / الانشغال (Engage)</h4>
+                            <p class="text-sm text-text_muted">يطرح المعلم سؤالاً محيراً أو يعرض ظاهرة تثير فضول الطلاب وتستدعي خبراتهم السابقة.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-c_cycle flex justify-center items-center font-black shrink-0 border-2 border-emerald-200 z-10">2</div>
+                        <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-lg w-full">
+                            <h4 class="text-lg font-bold text-c_cycle">الاستكشاف (Explore)</h4>
+                            <p class="text-sm text-text_main">يُترك الطلاب للعمل معاً بمواد تعليمية للبحث عن إجابات، ودور المعلم هنا <strong>مراقب وميسر</strong> فقط وليس شارحاً.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-c_cycle flex justify-center items-center font-black shrink-0 border-2 border-emerald-200 z-10">3</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-text_main">التفسير / الشرح (Explain)</h4>
+                            <p class="text-sm text-text_muted">يساعد المعلم الطلاب على صياغة المفاهيم التي اكتشفوها بلغة علمية وتوضيح المصطلحات الصعبة.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-c_cycle flex justify-center items-center font-black shrink-0 border-2 border-emerald-200 z-10">4</div>
+                        <div class="bg-blue-50 border border-blue-100 p-3 rounded-lg w-full">
+                            <h4 class="text-lg font-bold text-blue-600">التوسيع / الإثراء (Elaborate)</h4>
+                            <p class="text-sm text-text_main">يطلب المعلم تطبيق المفهوم في مواقف جديدة أو حل مشكلات مشابهة لضمان عمق الفهم وانتقال أثر التعلم.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-c_cycle flex justify-center items-center font-black shrink-0 border-2 border-emerald-200 z-10">5</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-text_main">التقويم (Evaluate)</h4>
+                            <p class="text-sm text-text_muted">مرحلة مستمرة لقياس مدى تقدم الطلاب وتحقيقهم للأهداف.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 3 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="3">
+                <h4 class="text-c_cycle font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-3"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: SUMMARY (الخلاصة) -->
+        <!-- ========================================== -->
+        <section id="tab-summary" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-blue-100 text-c_summary border border-blue-200 mb-3">ربط المفاهيم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">هندسة البناء المعرفي</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">خلاصة الاستراتيجيات البنائية وما وراء المعرفة لتنظيم التعلم.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_meta">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-brain text-c_meta ml-2"></i> ما وراء المعرفة</h3>
+                    <p class="text-sm text-text_muted">مهارة "التفكير في التفكير" التي تحول الطالب إلى مراقب ذاتي لعملياته العقلية، وتُطبق عملياً عبر "التدريس التبادلي".</p>
+                </div>
+                
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_visual">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-sitemap text-c_visual ml-2"></i> المنظمات التخطيطية</h3>
+                    <p class="text-sm text-text_muted">عظم السمكة (لتحليل المشكلات)، الشكل V (للربط النظري والعملي)، وخرائط المفاهيم (للتصنيف الهرمي)؛ أدوات بصرية تحول المحتوى المعقد لبنية مفهومة.</p>
+                </div>
+
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_cycle md:col-span-2">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-recycle text-c_cycle ml-2"></i> دورة التعلم 5Es</h3>
+                    <p class="text-sm text-text_muted">مسار تدريسي يحترم عقل المتعلم ويعتمد على التعلم البنائي، حيث يمنحه فرصة <strong>الاستكشاف</strong> والتجريب قبل أن يتلقى أي <strong>تفسير</strong> أو شرح علمي من المعلم، ثم ينتهي بـ <strong>التوسيع</strong> لضمان بقاء الأثر.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: EXAM (الامتحان) -->
+        <!-- ========================================== -->
+        <section id="tab-exam" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-red-100 text-c_exam border border-red-200 mb-3">اختبار الفصل الرابع</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">بنك الأسئلة الشامل</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">تتضمن هذه القائمة أسئلة الاختبار المعتمدة لتقييم إستراتيجيات البنائية وما وراء المعرفة.</p>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="bg-white card-shadow p-6 md:p-10 rounded-2xl relative overflow-hidden border-t-4 border-t-c_exam">
+                <div class="absolute -right-10 -top-10 opacity-5 text-9xl text-c_exam"><i class="fa-solid fa-file-contract"></i></div>
+                
+                <div id="quiz-start" class="text-center relative z-10">
+                    <i class="fa-solid fa-brain text-6xl text-c_exam mb-6 animate-pulse"></i>
+                    <h3 class="text-2xl font-black text-text_main mb-2">التحدي النهائي</h3>
+                    <p class="text-sm text-text_muted mb-8">محاكي اختبار من 10 أسئلة مقتبسة حصرياً من بنك المادة.</p>
+                    <button onclick="startQuiz()" class="bg-c_exam text-white font-black px-10 py-4 rounded-xl hover:bg-red-700 transition-all shadow-md">
+                        بدء الاختبار
+                    </button>
+                </div>
+                
+                <div id="quiz-area" class="hidden relative z-10 min-h-[300px]">
+                    <div class="flex justify-between items-center mb-6 text-xs font-bold border-b border-slate-100 pb-4">
+                        <span id="q-counter" class="text-white bg-c_exam px-3 py-1 rounded-full shadow-sm">السؤال 1 / 10</span>
+                        <span id="q-type" class="text-text_muted bg-slate-100 px-3 py-1 rounded-full">نوع السؤال</span>
+                    </div>
+                    <h4 id="q-text" class="text-lg md:text-xl font-bold text-text_main mb-8 leading-relaxed">نص السؤال...</h4>
+                    <div id="q-options" class="space-y-3">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden text-center py-10 relative z-10">
+                    <h3 class="text-3xl font-black text-text_main mb-2">اكتمل التقييم!</h3>
+                    <p class="text-xl text-c_exam font-bold mb-6">النتيجة: <span id="final-score" class="text-4xl text-text_main">0</span> / 10</p>
+                    <div id="result-msg" class="text-sm text-text_muted mb-8 bg-slate-50 p-4 rounded-lg inline-block border border-slate-200"></div>
+                    <br>
+                    <button onclick="document.getElementById('quiz-result').classList.add('hidden'); document.getElementById('quiz-start').classList.remove('hidden');" class="bg-white text-text_main px-8 py-3 rounded-lg border border-slate-300 hover:border-c_exam hover:text-c_exam transition-all font-bold shadow-sm">
+                        إعادة الاختبار
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 pb-safe z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-between items-center px-1 py-3 max-w-3xl mx-auto">
+            <button onclick="switchTab('meta')" id="nav-meta" data-color="meta" class="nav-item active flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_meta transition-all">
+                <i class="fa-solid fa-brain text-lg"></i>
+                <span class="text-[10px] font-bold">وراء المعرفة</span>
+            </button>
+            <button onclick="switchTab('visual')" id="nav-visual" data-color="visual" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_visual transition-all">
+                <i class="fa-solid fa-sitemap text-lg"></i>
+                <span class="text-[10px] font-bold">المنظمات</span>
+            </button>
+            <button onclick="switchTab('cycle')" id="nav-cycle" data-color="cycle" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_cycle transition-all">
+                <i class="fa-solid fa-recycle text-lg"></i>
+                <span class="text-[10px] font-bold">دورة التعلم</span>
+            </button>
+            <button onclick="switchTab('summary')" id="nav-summary" data-color="summary" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_summary transition-all">
+                <i class="fa-solid fa-book-open text-lg"></i>
+                <span class="text-[10px] font-bold">الخلاصة</span>
+            </button>
+            <button onclick="switchTab('exam')" id="nav-exam" data-color="exam" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_exam transition-all">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+                <span class="text-[10px] font-bold">الامتحان</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // --- Gamification & UI Logic (Isolated keys for Teaching Course CH4) ---
+        let xp = parseInt(localStorage.getItem('teaching_xp_ch4')) || 0;
+        let lvl = parseInt(localStorage.getItem('teaching_lvl_ch4')) || 1;
+
+        function updateUI() {
+            if(document.getElementById('userXP')) document.getElementById('userXP').innerText = `${xp} XP`;
+            if(document.getElementById('userLevel')) document.getElementById('userLevel').innerText = lvl;
+            if(document.getElementById('xpBar')) document.getElementById('xpBar').style.width = `${xp % 100}%`;
+        }
+
+        function addXP(amount, message, color = '#6366f1') {
+            xp += amount;
+            let newLvl = Math.floor(xp / 100) + 1;
+            
+            if(newLvl > lvl) { 
+                lvl = newLvl; 
+                showFloatingText('🎉 ارتقاء مستوى!', color); 
+            } else { 
+                showFloatingText(`+${amount} XP ${message}`, color); 
+            }
+            
+            // Save to LocalStorage
+            localStorage.setItem('teaching_xp_ch4', xp);
+            localStorage.setItem('teaching_lvl_ch4', lvl);
+            
+            updateUI();
+        }
+
+        function showFloatingText(text, color) {
+            const el = document.createElement('div');
+            el.className = 'xp-popup';
+            el.style.color = color;
+            el.innerText = text;
+            const x = window.innerWidth / 2 + (Math.random() * 60 - 30);
+            const y = window.innerHeight / 2;
+            el.style.left = `${x}px`; el.style.top = `${y}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1200);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const targetNav = document.getElementById(`nav-${tabId}`);
+            if(targetNav) targetNav.classList.add('active');
+
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // --- Active Recall Data ---
+        const recallData = {
+            1: [
+                { q: "ما المقصود باستراتيجيات 'ما وراء المعرفة'؟", a: "هي قدرة المتعلم على مراقبة وتوجيه عمليات تفكيره الذاتية ('التفكير في التفكير') عبر التخطيط، والمراقبة، والتقييم." },
+                { q: "ما هي المهارة الأولى التي يبدأ بها 'التدريس التبادلي'؟", a: "يبدأ بمهارة 'التنبؤ' (تخمين المحتوى من العناوين والصور)، يليها التساؤل، التوضيح، وأخيراً التلخيص." }
+            ],
+            2: [
+                { q: "ما أهمية استخدام المنظمات البصرية (كعظم السمكة) في التنظيم المعرفي للمتعلم؟", a: "تساعد في حصر كافة العوامل المؤثرة وتفكيك المشكلات المعقدة لأسباب رئيسية وفرعية، مما ينمي مهارات التحليل المنطقي ويبني بنية عقلية متماسكة." },
+                { q: "كيف يربط 'الشكل V' بين المعرفة والتطبيق؟", a: "يضع الجانب النظري والمفاهيمي في الجهة اليسرى، والجانب العملي التجريبي والإجرائي في الجهة اليمنى ليربط بينهما سؤال استقصاء في المنتصف." }
+            ],
+            3: [
+                { q: "وضح دور المعلم في مرحلة 'الاستكشاف' من إستراتيجية دورة التعلم (5Es).", a: "يكون دوره (مراقباً وميسراً) لعمل الطلاب ولا يقدم أي شرح مباشر، بل يترك الطلاب يبحثون ويتفاعلون مع المواد لاكتشاف الإجابات بأنفسهم." },
+                { q: "لماذا تم وضع مرحلة 'التوسيع/الإثراء' في دورة التعلم؟", a: "لربط العلم بالعمل وضمان استمرارية الأثر التعليمي من خلال طلب تطبيق المفهوم في مواقف وسياقات جديدة لحل مشكلات مشابهة." }
+            ]
+        };
+
+        // Render Active Recall
+        function renderRecallSections() {
+            Object.keys(recallData).forEach(secId => {
+                const container = document.getElementById(`recall-sec-${secId}`);
+                if(!container) return;
+                let html = '';
+                recallData[secId].forEach((item, idx) => {
+                    html += `
+                        <div class="bg-slate-50 p-3 rounded shadow-sm border border-slate-200 mb-2 cursor-pointer transition hover:bg-slate-100" onclick="toggleRecallAnswer(this)">
+                            <div class="text-sm font-bold text-text_main flex justify-between items-center">
+                                <span>${idx+1}. ${item.q}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                            </div>
+                            <div class="answer-content hidden mt-2 pt-2 border-t border-slate-200 text-[13px] text-emerald-600 font-medium leading-relaxed">
+                                ${item.a}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        let answeredRecalls = new Set();
+        function toggleRecallAnswer(el) {
+            const ans = el.querySelector('.answer-content');
+            const icon = el.querySelector('i.fa-solid');
+            
+            ans.classList.toggle('hidden');
+            
+            if(!ans.classList.contains('hidden')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                if(!answeredRecalls.has(el)) { 
+                    answeredRecalls.add(el); 
+                    addXP(5, 'تنشيط الذاكرة', '#f59e0b'); 
+                }
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        }
+
+        // --- Quiz Engine (Exactly matching the 10 provided & derived questions) ---
+        const quizQuestions = [
+            { type: "صح وخطأ", q: "يُقصد بـ 'ما وراء المعرفة' قدرة المتعلم على مراقبة وتوجيه عمليات تفكيره الذاتية.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح. ما وراء المعرفة تعني (التفكير في التفكير) ليكون الطالب مراقباً لذاته الفكرية." },
+            { type: "صح وخطأ", q: "تبدأ إستراتيجية 'التدريس التبادلي' بمرحلة التلخيص كخطوة أولى لفهم النص.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. التلخيص هي الخطوة الرابعة والأخيرة، بينما تبدأ الإستراتيجية بمهارة (التنبؤ)." },
+            { type: "صح وخطأ", q: "يُستخدم نموذج 'عظم السمكة' بشكل أساسي لتحليل الأسباب الكامنة وراء مشكلة معينة.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح. يسمى بمخطط (السبب والنتيجة) لتفكيك المشكلات وعواملها." },
+            { type: "صح وخطأ", q: "في إستراتيجية 'الشكل V'، يوضع الجانب النظري المفاهيمي في الجانب الأيمن من المخطط.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. الجانب النظري (الفلسفة والمفاهيم) يوضع في اليسار، والجانب الإجرائي (الخطوات والنتائج) في اليمين." },
+            { type: "صح وخطأ", q: "تعتمد دورة التعلم 5Es على تقديم الشرح العلمي من المعلم قبل مرحلة استكشاف الطلاب.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. الفلسفة البنائية تقدم مرحلة (الاستكشاف) أولاً ليجرب الطالب، ثم يأتي (التفسير والشرح) لاحقاً." },
+            { type: "اختياري", q: "المهارة التي يقوم فيها الطالب بتخمين ما سيتناوله النص بناءً على العناوين هي مهارة:", opts: ["التساؤل", "التنبؤ", "التوضيح", "التقويم"], ans: 1, exp: "التنبؤ هو التوقع المبدئي للمحتوى من خلال قراءة العناوين والصور." },
+            { type: "اختياري", q: "المنظم التخطيطي الذي يوضح العلاقات الهرمية بين المفاهيم من العام إلى الخاص هو:", opts: ["عظم السمكة", "الشكل V", "خرائط المفاهيم", "دورة التعلم"], ans: 2, exp: "خرائط المفاهيم تبدأ بمفهوم رئيسي عام وتتفرع هرمياً لمفاهيم أصغر وكلمات ربط." },
+            { type: "اختياري", q: "المرحلة التي يقوم فيها الطلاب بتطبيق ما تعلموه في مواقف جديدة من دورة التعلم هي:", opts: ["الانشغال", "التفسير", "التوسيع", "الاستكشاف"], ans: 2, exp: "التوسيع (أو الإثراء - Elaborate) يطلب تطبيق المعرفة لضمان انتقال أثر التعلم في سياقات جديدة." },
+            { type: "اختياري", q: "أي مما يلي يعد من مهارات 'ما وراء المعرفة' التي تسبق البدء في تنفيذ المهمة؟", opts: ["التخطيط", "المراقبة", "التقويم", "المراجعة"], ans: 0, exp: "مهارة التخطيط تتضمن تحديد الأهداف والخطوات قبل الانطلاق في مهمة التعلم." },
+            { type: "مفاهيم عامة", q: "في إستراتيجية دورة التعلم (5Es)، دور المعلم في مرحلة 'الاستكشاف' يكون:", opts: ["ملقناً للمعلومات", "مراقباً وميسراً للبحث", "مقيماً نهائياً للطلاب", "شارحاً للمفاهيم الصعبة"], ans: 1, exp: "في مرحلة الاستكشاف، يُترك الطلاب للعمل والبحث، وينحصر دور المعلم في التيسير والمراقبة فقط." }
+        ];
+
+        let currQ = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currQ = 0;
+            score = 0;
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-area').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizQuestions[currQ];
+            document.getElementById('q-counter').innerText = `السؤال ${currQ + 1} / ${quizQuestions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerText = q.q;
+            
+            const optsDiv = document.getElementById('q-options');
+            optsDiv.innerHTML = '';
+            
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-right p-4 rounded-xl border border-slate-200 bg-white hover:border-c_exam hover:bg-slate-50 transition-all text-sm font-bold text-text_main shadow-sm";
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(idx, btnNode) {
+            const q = quizQuestions[currQ];
+            const allBtns = document.getElementById('q-options').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+            
+            if(idx === q.ans) {
+                btnNode.classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                score++;
+                addXP(15, 'إجابة صحيحة!', '#10b981');
+            } else {
+                btnNode.classList.add('bg-red-50', 'border-red-400', 'text-red-700');
+                allBtns[q.ans].classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                addXP(0, 'تعلم من الخطأ', '#64748b');
+            }
+            
+            const expDiv = document.createElement('div');
+            expDiv.className = "mt-4 p-3 bg-indigo-50 border-r-4 border-c_exam rounded text-xs text-indigo-900 leading-relaxed";
+            expDiv.innerHTML = `<strong class="text-c_exam">التفسير:</strong> ${q.exp}`;
+            document.getElementById('q-options').appendChild(expDiv);
+            
+            setTimeout(() => {
+                currQ++;
+                if(currQ < quizQuestions.length) loadQuestion();
+                else showResults();
+            }, 3500);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-area').classList.add('hidden');
+            const resDiv = document.getElementById('quiz-result');
+            resDiv.classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            
+            let msg = "";
+            if(score === 10) msg = "علامة كاملة! لقد أتقنت استراتيجيات البنائية وما وراء المعرفة باحتراف. 👑";
+            else if(score >= 7) msg = "أداء ممتاز! قدرتك على التحليل واستيعاب المنظمات البصرية رائعة. 🧠";
+            else msg = "تحتاج إلى مراجعة دورة التعلم والمنظمات التخطيطية ثم العودة للتحدي. 🔄";
+            
+            document.getElementById('result-msg').innerHTML = `<strong>${msg}</strong>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecallSections();
+            updateUI();
+        });
+    </script>
+</body>
+</html>

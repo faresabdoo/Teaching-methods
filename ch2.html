@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أكاديمية التدريس | الفصل الثاني: الحوار وحل المشكلات</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        bg_light: '#f8fafc',       // خلفية مضيئة مريحة للعين
+                        card_light: '#ffffff',     // كروت بيضاء
+                        text_main: '#1e293b',      // نص أساسي داكن للقراءة
+                        text_muted: '#64748b',     // نص ثانوي
+                        c_socratic: '#2563eb',     // أزرق: عمق التفكير السقراطي
+                        c_discuss: '#059669',      // أخضر: التفاعل والمناقشة
+                        c_problem: '#ea580c',      // برتقالي: النشاط وحل المشكلات
+                        c_summary: '#7c3aed',      // بنفسجي: الحكمة والخلاصة
+                        c_exam: '#dc2626',         // أحمر: التحدي والامتحان
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.03), transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(5, 150, 105, 0.03), transparent 20%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .view-section { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nav active states - Light Mode */
+        .nav-item.active { transform: translateY(-5px); font-weight: 800; }
+        .nav-item.active[data-color="socratic"] { color: #2563eb; }
+        .nav-item.active[data-color="discuss"] { color: #059669; }
+        .nav-item.active[data-color="problem"] { color: #ea580c; }
+        .nav-item.active[data-color="summary"] { color: #7c3aed; }
+        .nav-item.active[data-color="exam"] { color: #dc2626; }
+
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%;
+        }
+        .nav-item.active[data-color="socratic"]::after { background: #2563eb; }
+        .nav-item.active[data-color="discuss"]::after { background: #059669; }
+        .nav-item.active[data-color="problem"]::after { background: #ea580c; }
+        .nav-item.active[data-color="summary"]::after { background: #7c3aed; }
+        .nav-item.active[data-color="exam"]::after { background: #dc2626; }
+
+        .badge { font-size: 11px; padding: 4px 10px; border-radius: 9999px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; }
+
+        @keyframes floatUpXP { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.4); } }
+        .xp-popup { position: fixed; font-weight: 900; font-size: 1.5rem; pointer-events: none; z-index: 9999; animation: floatUpXP 1.2s ease-out forwards; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-header px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border border-slate-200 rounded-xl flex items-center justify-center font-space font-black text-white shadow-sm bg-gradient-to-br from-c_socratic to-c_discuss">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-text_main text-sm md:text-base tracking-wide">أكاديمية المعلم | الفصل 2</h1>
+                    <div class="w-32 h-1.5 bg-slate-200 rounded-full mt-1 overflow-hidden">
+                        <div id="xpBar" class="h-full bg-gradient-to-r from-c_socratic to-c_problem transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border border-slate-200 px-3 py-1.5 rounded-full text-xs font-space font-bold tracking-wider flex items-center gap-2 text-text_main shadow-sm cursor-pointer hover:bg-slate-50 transition" onclick="addXP(5, 'شغف التعلم', '#2563eb')">
+                <i class="fa-solid fa-star text-yellow-500"></i>
+                <span id="userXP">0 XP</span>
+                <span class="text-slate-400 ml-1">| Lvl <span id="userLevel" class="text-c_socratic font-black">1</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 md:px-8 max-w-6xl mx-auto w-full">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: SOCRATIC (الطريقة السقراطية) -->
+        <!-- ========================================== -->
+        <section id="tab-socratic" class="view-section active">
+            <div class="text-center mb-10">
+                <span class="badge bg-blue-100 text-c_socratic border border-blue-200 mb-3">توليد الأفكار لا تلقينها</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">الطريقة السقراطية</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">ترفض هذه الطريقة "التعليم بالإيداع المعرفي" وتعتمد على استثارة العقل للوصول للحقيقة من داخله.</p>
+            </div>
+
+            <!-- Concepts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-card_light rounded-2xl p-6 card-shadow relative overflow-hidden group hover:border-c_socratic transition-colors">
+                    <div class="absolute -right-4 -top-4 text-7xl text-blue-50 opacity-50 group-hover:scale-110 transition-transform duration-500"><i class="fa-solid fa-mask"></i></div>
+                    <h4 class="font-black text-c_socratic text-xl mb-3 flex items-center gap-2 relative z-10">
+                        <i class="fa-solid fa-question-circle"></i> 1. آلية التهكم (Irony)
+                    </h4>
+                    <p class="text-sm text-text_main leading-relaxed relative z-10">
+                        ليس المقصود بها السخرية، بل هو أسلوب <strong>"الجهل المتظاهر"</strong> الذي يتبعه المعلم؛ حيث يطرح أسئلة تُظهر للطالب تناقض أفكاره الأولية أو عدم دقة معلوماته، مما يدفعه للتخلي عن الجمود الفكري والبدء في البحث الجاد.
+                    </p>
+                </div>
+
+                <div class="bg-card_light rounded-2xl p-6 card-shadow relative overflow-hidden group hover:border-c_socratic transition-colors">
+                    <div class="absolute -right-4 -top-4 text-7xl text-blue-50 opacity-50 group-hover:scale-110 transition-transform duration-500"><i class="fa-solid fa-lightbulb"></i></div>
+                    <h4 class="font-black text-c_socratic text-xl mb-3 flex items-center gap-2 relative z-10">
+                        <i class="fa-solid fa-seedling"></i> 2. آلية التوليد (Maieutics)
+                    </h4>
+                    <p class="text-sm text-text_main leading-relaxed relative z-10">
+                        يقوم المعلم بدور <strong>"المولد للأفكار"</strong>، يقود الطالب عبر سلسلة أسئلة متدرجة ومترابطة منطقياً، لينتقل به من المحسوس للمجرد، حتى يصل الطالب بنفسه للتعريف الصحيح.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Socratic Example (Chat UI) -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8">
+                <h4 class="font-bold text-text_main mb-4 border-b border-slate-200 pb-2"><i class="fa-solid fa-comments text-c_socratic"></i> مثال تطبيقي: حوار حول مفهوم "التقويم"</h4>
+                
+                <div class="space-y-4 text-sm">
+                    <!-- Teacher -->
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-full bg-c_socratic text-white flex items-center justify-center shrink-0"><i class="fa-solid fa-chalkboard-user text-xs"></i></div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tr-none border border-slate-200 shadow-sm text-text_main">
+                            <span class="text-xs text-slate-400 block mb-1">المعلم (سؤال استهلالي):</span>
+                            إذا حصل طالب على 15 من 20 في اختبار، هل هذا هو التقويم؟
+                        </div>
+                    </div>
+                    <!-- Student -->
+                    <div class="flex gap-3 flex-row-reverse">
+                        <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center shrink-0"><i class="fa-solid fa-user text-xs"></i></div>
+                        <div class="bg-blue-50 p-3 rounded-2xl rounded-tl-none border border-blue-100 shadow-sm text-text_main">
+                            <span class="text-xs text-blue-400 block mb-1">الطالب:</span>
+                            نعم يا دكتور، هذا تقويم لمستواه.
+                        </div>
+                    </div>
+                    <!-- Teacher (Irony) -->
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-full bg-c_socratic text-white flex items-center justify-center shrink-0"><i class="fa-solid fa-chalkboard-user text-xs"></i></div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tr-none border border-slate-200 shadow-sm text-text_main">
+                            <span class="text-xs text-c_socratic font-bold block mb-1">المعلم (تهكم سقراطي):</span>
+                            هل هذه الدرجة (15) تخبرني هل الطالب ناجح أم راسب؟ وهل تخبرني كيف أعالج ضعفه في الـ 5 درجات الناقصة؟
+                        </div>
+                    </div>
+                    <!-- Student -->
+                    <div class="flex gap-3 flex-row-reverse">
+                        <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center shrink-0"><i class="fa-solid fa-user text-xs"></i></div>
+                        <div class="bg-blue-50 p-3 rounded-2xl rounded-tl-none border border-blue-100 shadow-sm text-text_main">
+                            <span class="text-xs text-blue-400 block mb-1">الطالب:</span>
+                            لا، هي فقط تخبرنا بكمية المعلومات التي أجاب عنها.
+                        </div>
+                    </div>
+                    <!-- Teacher (Maieutics) -->
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-full bg-c_socratic text-white flex items-center justify-center shrink-0"><i class="fa-solid fa-chalkboard-user text-xs"></i></div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tr-none border border-slate-200 shadow-sm text-text_main">
+                            <span class="text-xs text-c_socratic font-bold block mb-1">المعلم (التوليد والوصول للحقيقة):</span>
+                            إذن، العملية التي تعطينا رقماً نسميها "قياساً". وعندما نحكم على القيمة ونضع خطة للعلاج، ماذا نكون قد فعلنا؟
+                        </div>
+                    </div>
+                    <!-- Student -->
+                    <div class="flex gap-3 flex-row-reverse">
+                        <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center shrink-0"><i class="fa-solid fa-user text-xs"></i></div>
+                        <div class="bg-blue-50 p-3 rounded-2xl rounded-tl-none border border-blue-100 shadow-sm text-text_main">
+                            <span class="text-xs text-blue-400 block mb-1">الطالب (الاستنتاج):</span>
+                            التقويم! هو عملية شاملة تبدأ بالقياس، ثم الحكم، ثم العلاج والتطوير.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 1 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="1">
+                <h4 class="text-c_socratic font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-1"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: DISCUSSION (المناقشة العامة) -->
+        <!-- ========================================== -->
+        <section id="tab-discuss" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-green-100 text-c_discuss border border-green-200 mb-3">مجتمع يتعلم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">المناقشة العامة</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">تطوير منظم للحوار يتبادل فيه الطلاب الخبرات ويحترمون الآراء.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Conditions -->
+                <div class="bg-white card-shadow p-5 rounded-xl border-t-4 border-t-c_discuss">
+                    <h4 class="font-bold text-text_main mb-3"><i class="fa-solid fa-list-check text-c_discuss"></i> شروط النجاح</h4>
+                    <ul class="text-sm text-text_muted space-y-2 list-disc list-inside">
+                        <li><strong class="text-text_main">الإعداد القبلي:</strong> قراءة مسبقة (لا تنجح بلا أرضية معرفية).</li>
+                        <li><strong class="text-text_main">أسئلة مفتوحة:</strong> تبدأ بـ (لماذا، كيف، ما رأيك). لا تكتفي بـ (نعم/لا).</li>
+                        <li><strong class="text-text_main">الضبط الصفي:</strong> إدارة الدور بعدالة ومنع الاستئثار بالحديث.</li>
+                    </ul>
+                </div>
+
+                <!-- Levels -->
+                <div class="bg-white card-shadow p-5 rounded-xl border-t-4 border-t-emerald-400">
+                    <h4 class="font-bold text-text_main mb-3"><i class="fa-solid fa-layer-group text-emerald-500"></i> مستويات المناقشة</h4>
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 p-2 rounded text-sm text-text_muted border border-slate-100">
+                            <strong class="text-text_main block">1. المناقشة الموجهة:</strong>
+                            يسيطر المعلم على المسار ويوجهه نحو أهداف محددة سلفاً.
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded text-sm text-text_muted border border-slate-100">
+                            <strong class="text-text_main block">2. المناقشة الحرة:</strong>
+                            يطرح المعلم قضية ويترك للطلاب حرية الحوار تحت إشرافه البعيد.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value -->
+                <div class="bg-white card-shadow p-5 rounded-xl border-t-4 border-t-teal-500">
+                    <h4 class="font-bold text-text_main mb-3"><i class="fa-solid fa-gem text-teal-500"></i> القيمة التربوية</h4>
+                    <p class="text-xs text-text_muted mb-2">تتجاوز نقل المحتوى إلى بناء الشخصية عبر:</p>
+                    <ul class="text-sm text-text_main space-y-1">
+                        <li><i class="fa-solid fa-check text-green-500 text-xs"></i> الإنصات واحترام الآخر.</li>
+                        <li><i class="fa-solid fa-check text-green-500 text-xs"></i> المرافعة وصياغة الحجج.</li>
+                        <li><i class="fa-solid fa-check text-green-500 text-xs"></i> المرونة الفكرية وتعديل القناعات.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Note -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-8 text-sm text-yellow-800 flex gap-3 items-start shadow-sm">
+                <i class="fa-solid fa-lightbulb text-yellow-500 text-xl mt-1"></i>
+                <div>
+                    <strong class="block mb-1">توجيه فني:</strong>
+                    إن نجاح المناقشة لا يُقاس بمدى صخب الحديث في الفصل، بل بمدى اقتراب الطلاب من الأهداف السلوكية المرسومة للموقف التعليمي بنهاية الجلسة.
+                </div>
+            </div>
+
+            <!-- Active Recall 2 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="2">
+                <h4 class="text-c_discuss font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-2"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: PROBLEM SOLVING (حل المشكلات) -->
+        <!-- ========================================== -->
+        <section id="tab-problem" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-orange-100 text-c_problem border border-orange-200 mb-3">التفكير العلمي</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">حل المشكلات</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">وضع المتعلم في موقف يحتار فيه لإيجاد حل لعائق ما، مما يستنفر طاقاته العقلية والبحثية.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Elements -->
+                <div class="bg-white card-shadow rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-text_main mb-4 flex items-center gap-2"><i class="fa-solid fa-puzzle-piece text-c_problem"></i> مكونات المشكلة الناجحة</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-orange-100 text-c_problem flex justify-center items-center shrink-0 font-bold">1</div>
+                            <div>
+                                <strong class="text-text_main block">وجود هدف</strong>
+                                <p class="text-xs text-text_muted">غاية يسعى المتعلم للوصول إليها.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-orange-100 text-c_problem flex justify-center items-center shrink-0 font-bold">2</div>
+                            <div>
+                                <strong class="text-text_main block">وجود عائق</strong>
+                                <p class="text-xs text-text_muted">صعوبة تمنع الوصول المباشر للهدف بالمعلومات الحالية.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-orange-100 text-c_problem flex justify-center items-center shrink-0 font-bold">3</div>
+                            <div>
+                                <strong class="text-text_main block">دافعية التحرك</strong>
+                                <p class="text-xs text-text_muted">رغبة المتعلم الحقيقية في تذليل العائق للوصول للحل.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Steps Timeline -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 relative">
+                    <h3 class="text-xl font-bold text-text_main mb-6 flex items-center gap-2"><i class="fa-solid fa-stairs text-c_problem"></i> خطوات الإستراتيجية</h3>
+                    <div class="relative border-r-2 border-orange-200 pr-6 space-y-4 text-sm">
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1 w-4 h-4 rounded-full bg-c_problem border-4 border-slate-50"></div>
+                            <strong class="text-text_main">1. الشعور بالمشكلة:</strong> <span class="text-text_muted">إثارة الحيرة حول ظاهرة معينة.</span>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1 w-4 h-4 rounded-full bg-c_problem border-4 border-slate-50"></div>
+                            <strong class="text-text_main">2. تحديد المشكلة:</strong> <span class="text-text_muted">صياغتها بدقة في سؤال أو عبارة.</span>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1 w-4 h-4 rounded-full bg-c_problem border-4 border-slate-50"></div>
+                            <strong class="text-text_main">3. جمع المعلومات:</strong> <span class="text-text_muted">الاستقصاء من المصادر.</span>
+                        </div>
+                        <div class="relative bg-orange-100/50 p-2 rounded border border-orange-200">
+                            <div class="absolute -right-[40px] top-3 w-4 h-4 rounded-full bg-c_problem border-4 border-slate-50"></div>
+                            <strong class="text-c_problem block">4. فرض الفروض:</strong> <span class="text-text_main text-xs">تقديم حلول مؤقتة وذكية (إجابات تخمينية).</span>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1 w-4 h-4 rounded-full bg-c_problem border-4 border-slate-50"></div>
+                            <strong class="text-text_main">5. اختبار صحة الفروض:</strong> <span class="text-text_muted">تقييم كل فرض واستبعاد غير المنطقي.</span>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1 w-4 h-4 rounded-full bg-c_problem border-4 border-slate-50"></div>
+                            <strong class="text-text_main">6. النتائج والتعميم:</strong> <span class="text-text_muted">صياغة الحل وتطبيقه.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Recall 3 -->
+            <div class="bg-white card-shadow rounded-xl p-5" data-section="3">
+                <h4 class="text-c_problem font-bold text-sm mb-4"><i class="fa-solid fa-bolt text-yellow-500"></i> الاسترجاع الفوري</h4>
+                <div class="space-y-3" id="recall-sec-3"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: SUMMARY (الخلاصة) -->
+        <!-- ========================================== -->
+        <section id="tab-summary" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-purple-100 text-c_summary border border-purple-200 mb-3">ربط المفاهيم</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">من الحوار إلى البحث العلمي</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">خلاصة الانتقال من التنظير المفاهيمي إلى آليات التنفيذ لجعل المتعلم محوراً.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_socratic">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-comment-dots text-c_socratic ml-2"></i> جوهر الحوار السقراطي</h3>
+                    <p class="text-sm text-text_muted">يظل السؤال الجيد أقوى من الإجابة الجاهزة. المعلم "يولد" الأفكار ولا يلقنها، مستخدماً "التهكم" لزعزعة اليقين الخاطئ، و"التوليد" لبناء المعرفة الصحيحة.</p>
+                </div>
+                
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_discuss">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-users-gear text-c_discuss ml-2"></i> هندسة المناقشة</h3>
+                    <p class="text-sm text-text_muted">المناقشة الناجحة ليست حواراً عفوياً، بل موقف تعليمي مخطط يعتمد على أسئلة مفتوحة النهاية وإدارة عادلة للتفاعلات.</p>
+                </div>
+
+                <div class="bg-white card-shadow p-6 rounded-2xl border-t-4 border-t-c_problem">
+                    <h3 class="font-bold text-text_main mb-2"><i class="fa-solid fa-microscope text-c_problem ml-2"></i> منهجية حل المشكلات</h3>
+                    <p class="text-sm text-text_muted">تمثل "العمود الفقري" للتفكير العلمي، تدرب الطالب على مواجهة التحديات بخطوات تبدأ بالشعور بالمشكلة وتنتهي بالتعميم.</p>
+                </div>
+
+                <div class="bg-purple-50 card-shadow p-6 rounded-2xl border-t-4 border-t-c_summary">
+                    <h3 class="font-bold text-c_summary mb-2"><i class="fa-solid fa-rotate text-c_summary ml-2"></i> تحول الأدوار والقيمة المضافة</h3>
+                    <p class="text-sm text-text_main">تراجع دور المعلم ليكون "موجهاً ومحفزاً"، وتصدر المتعلم ليكون "باحثاً ومكتشفاً". الهدف النهائي بناء <strong>عقلية ناقدة</strong> تحل مشكلات الواقع، لا مجرد اجتياز اختبارات.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: EXAM (الامتحان) -->
+        <!-- ========================================== -->
+        <section id="tab-exam" class="view-section">
+            <div class="text-center mb-10">
+                <span class="badge bg-red-100 text-c_exam border border-red-200 mb-3">اختبار الفصل الثاني</span>
+                <h2 class="text-3xl md:text-4xl font-black text-text_main mb-4">بنك الأسئلة الشامل</h2>
+                <p class="text-text_muted text-sm max-w-2xl mx-auto">اختبر استيعابك لإستراتيجيات الحوار وحل المشكلات.</p>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="bg-white card-shadow p-6 md:p-10 rounded-2xl relative overflow-hidden border-t-4 border-t-c_exam">
+                <div class="absolute -right-10 -top-10 opacity-5 text-9xl text-c_exam"><i class="fa-solid fa-gamepad"></i></div>
+                
+                <div id="quiz-start" class="text-center relative z-10">
+                    <i class="fa-solid fa-brain text-6xl text-c_exam mb-6 animate-pulse"></i>
+                    <h3 class="text-2xl font-black text-text_main mb-2">التحدي النهائي</h3>
+                    <p class="text-sm text-text_muted mb-8">محاكي اختبار من 10 أسئلة تغطي المفاهيم بدقة.</p>
+                    <button onclick="startQuiz()" class="bg-c_exam text-white font-black px-10 py-4 rounded-xl hover:bg-red-700 transition-all shadow-md">
+                        بدء الاختبار
+                    </button>
+                </div>
+                
+                <div id="quiz-area" class="hidden relative z-10 min-h-[300px]">
+                    <div class="flex justify-between items-center mb-6 text-xs font-bold border-b border-slate-100 pb-4">
+                        <span id="q-counter" class="text-white bg-c_exam px-3 py-1 rounded-full shadow-sm">السؤال 1 / 10</span>
+                        <span id="q-type" class="text-text_muted bg-slate-100 px-3 py-1 rounded-full">نوع السؤال</span>
+                    </div>
+                    <h4 id="q-text" class="text-lg md:text-xl font-bold text-text_main mb-8 leading-relaxed">نص السؤال...</h4>
+                    <div id="q-options" class="space-y-3">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden text-center py-10 relative z-10">
+                    <h3 class="text-3xl font-black text-text_main mb-2">اكتمل التقييم!</h3>
+                    <p class="text-xl text-c_exam font-bold mb-6">النتيجة: <span id="final-score" class="text-4xl text-text_main">0</span> / 10</p>
+                    <div id="result-msg" class="text-sm text-text_muted mb-8 bg-slate-50 p-4 rounded-lg inline-block border border-slate-200"></div>
+                    <br>
+                    <button onclick="document.getElementById('quiz-result').classList.add('hidden'); document.getElementById('quiz-start').classList.remove('hidden');" class="bg-white text-text_main px-8 py-3 rounded-lg border border-slate-300 hover:border-c_exam hover:text-c_exam transition-all font-bold shadow-sm">
+                        إعادة الاختبار
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 pb-safe z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-between items-center px-1 py-3 max-w-3xl mx-auto">
+            <button onclick="switchTab('socratic')" id="nav-socratic" data-color="socratic" class="nav-item active flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_socratic transition-all">
+                <i class="fa-solid fa-question-circle text-lg"></i>
+                <span class="text-[10px] font-bold">سقراط</span>
+            </button>
+            <button onclick="switchTab('discuss')" id="nav-discuss" data-color="discuss" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_discuss transition-all">
+                <i class="fa-solid fa-users text-lg"></i>
+                <span class="text-[10px] font-bold">المناقشة</span>
+            </button>
+            <button onclick="switchTab('problem')" id="nav-problem" data-color="problem" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_problem transition-all">
+                <i class="fa-solid fa-puzzle-piece text-lg"></i>
+                <span class="text-[10px] font-bold">المشكلات</span>
+            </button>
+            <button onclick="switchTab('summary')" id="nav-summary" data-color="summary" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_summary transition-all">
+                <i class="fa-solid fa-book-open text-lg"></i>
+                <span class="text-[10px] font-bold">الخلاصة</span>
+            </button>
+            <button onclick="switchTab('exam')" id="nav-exam" data-color="exam" class="nav-item flex flex-col items-center gap-1 w-1/5 text-slate-400 hover:text-c_exam transition-all">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+                <span class="text-[10px] font-bold">الامتحان</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // --- Gamification & UI Logic (Isolated keys for Teaching Course CH2) ---
+        let xp = parseInt(localStorage.getItem('teaching_xp_ch2')) || 0;
+        let lvl = parseInt(localStorage.getItem('teaching_lvl_ch2')) || 1;
+
+        function updateUI() {
+            if(document.getElementById('userXP')) document.getElementById('userXP').innerText = `${xp} XP`;
+            if(document.getElementById('userLevel')) document.getElementById('userLevel').innerText = lvl;
+            if(document.getElementById('xpBar')) document.getElementById('xpBar').style.width = `${xp % 100}%`;
+        }
+
+        function addXP(amount, message, color = '#2563eb') {
+            xp += amount;
+            let newLvl = Math.floor(xp / 100) + 1;
+            
+            if(newLvl > lvl) { 
+                lvl = newLvl; 
+                showFloatingText('🎉 ارتقاء مستوى!', color); 
+            } else { 
+                showFloatingText(`+${amount} XP ${message}`, color); 
+            }
+            
+            // Save to LocalStorage
+            localStorage.setItem('teaching_xp_ch2', xp);
+            localStorage.setItem('teaching_lvl_ch2', lvl);
+            
+            updateUI();
+        }
+
+        function showFloatingText(text, color) {
+            const el = document.createElement('div');
+            el.className = 'xp-popup';
+            el.style.color = color;
+            el.innerText = text;
+            const x = window.innerWidth / 2 + (Math.random() * 60 - 30);
+            const y = window.innerHeight / 2;
+            el.style.left = `${x}px`; el.style.top = `${y}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1200);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const targetNav = document.getElementById(`nav-${tabId}`);
+            if(targetNav) targetNav.classList.add('active');
+
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // --- Active Recall Data ---
+        const recallData = {
+            1: [
+                { q: "ما هو المقصود بـ 'التهكم' في الطريقة السقراطية؟", a: "ليس السخرية، بل 'الجهل المتظاهر' لطرح أسئلة تظهر للطالب تناقض أفكاره ودفعه للبحث الجاد." },
+                { q: "هل تعتمد الأسئلة السقراطية على الحفظ والتذكر؟", a: "لا، ترفض الحفظ وتركز على أسئلة 'سبر الأغوار' لاستقصاء الأدلة وفحص الافتراضات." }
+            ],
+            2: [
+                { q: "لماذا يعتبر الإعداد القبلي شرطاً لنجاح المناقشة؟", a: "لأن المناقشة لا تنجح بدون أرضية معرفية؛ يجب قراءة أو مشاهدة مادة قبل بدء النقاش لتبادل خبرات حقيقية." },
+                { q: "كيف يقاس نجاح إستراتيجية المناقشة؟", a: "لا يقاس بصخب الحديث، بل باقتراب الطلاب من الأهداف السلوكية المرسومة بنهاية الجلسة." }
+            ],
+            3: [
+                { q: "ما هي أول خطوة فعلية في إستراتيجية حل المشكلات؟", a: "الشعور بالمشكلة (إثارة الحيرة لدى الطلاب حول ظاهرة معينة)." },
+                { q: "ماذا يقصد بـ 'فرض الفروض'؟", a: "تقديم حلول مؤقتة وذكية (إجابات تخمينية) للمشكلة بناءً على المعلومات المجمعة." }
+            ]
+        };
+
+        // Render Active Recall (Light Mode Adaptation)
+        function renderRecallSections() {
+            Object.keys(recallData).forEach(secId => {
+                const container = document.getElementById(`recall-sec-${secId}`);
+                if(!container) return;
+                let html = '';
+                recallData[secId].forEach((item, idx) => {
+                    html += `
+                        <div class="bg-slate-50 p-3 rounded shadow-sm border border-slate-200 mb-2 cursor-pointer transition hover:bg-slate-100" onclick="toggleRecallAnswer(this)">
+                            <div class="text-sm font-bold text-text_main flex justify-between items-center">
+                                <span>${idx+1}. ${item.q}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                            </div>
+                            <div class="answer-content hidden mt-2 pt-2 border-t border-slate-200 text-[13px] text-emerald-600 font-medium leading-relaxed">
+                                ${item.a}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        let answeredRecalls = new Set();
+        function toggleRecallAnswer(el) {
+            const ans = el.querySelector('.answer-content');
+            const icon = el.querySelector('i.fa-solid');
+            
+            ans.classList.toggle('hidden');
+            
+            if(!ans.classList.contains('hidden')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                if(!answeredRecalls.has(el)) { 
+                    answeredRecalls.add(el); 
+                    addXP(5, 'تنشيط الذاكرة', '#f59e0b'); 
+                }
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        }
+
+        // --- Quiz Engine (Adapted for Ch2 Content & Light Mode) ---
+        const quizQuestions = [
+            { type: "صح وخطأ", q: "تعتمد الطريقة السقراطية في جوهرها على تقديم إجابات نموذجية جاهزة للطالب لحفظها.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. الطريقة ترفض التلقين وتعتمد على 'التوليد' من داخل عقل المتعلم." },
+            { type: "صح وخطأ", q: "يُقصد بـ 'التهكم السقراطي' السخرية من إجابات الطالب لتقليل ثقتهم بأنفسهم.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. المقصود به 'الجهل المتظاهر' لدفع الطالب للتخلي عن جموده الفكري." },
+            { type: "صح وخطأ", q: "تنجح إستراتيجية 'حل المشكلات' بامتياز عندما يمتلك الطالب دافعية حقيقية لسد الفجوة المعرفية.", opts: ["صح", "خطأ"], ans: 0, exp: "صحيح. دافعية التحرك هي ركن أساسي من مكونات المشكلة الناجحة." },
+            { type: "صح وخطأ", q: "في 'طريقة المناقشة'، يقتصر دور المعلم على إلقاء المعلومات بينما يكتفي الطالب بالاستماع.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. المناقشة تبني شخصية الطالب عبر المرافعة والمرونة والإنصات النشط." },
+            { type: "صح وخطأ", q: "تعتبر مرحلة 'فرض الفروض' هي الخطوة الأولى والأساسية في إستراتيجية حل المشكلات.", opts: ["صح", "خطأ"], ans: 1, exp: "خطأ. الخطوة الأولى هي (الشعور بالمشكلة) تليها التحديد ثم جمع البيانات ثم الفروض." },
+            { type: "اختياري", q: "العملية التي يقوم فيها المعلم باستدراج المتعلم للوصول إلى الحقيقة عبر سلسلة أسئلة متدرجة تسمى:", opts: ["التلقين", "التوليد السقراطي", "العصف الذهني", "التعلم الذاتي"], ans: 1, exp: "التوليد (Maieutics) هو الانتقال من المحسوس للمجرد عبر الأسئلة للوصول للتعريف." },
+            { type: "اختياري", q: "أي من الخطوات التالية تلي مباشرة عملية 'جمع البيانات' في إستراتيجية حل المشكلات؟", opts: ["الشعور بالمشكلة", "تحديد المشكلة", "فرض الفروض", "تعميم النتائج"], ans: 2, exp: "بعد جمع المعلومات من المصادر، نقوم بتقديم إجابات تخمينية (فرض الفروض)." },
+            { type: "اختياري", q: "المناقشة التي يطرح فيها المعلم قضية عامة ويترك للطلاب حرية الحوار تحت إشرافه البعيد تسمى:", opts: ["مناقشة موجهة", "مناقشة حرة", "تمثيل أدوار", "موديول تعليمي"], ans: 1, exp: "المناقشة الحرة تمنح مساحة أكبر للطلاب مقارنة بالمناقشة الموجهة." },
+            { type: "اختياري", q: "لضمان نجاح المناقشة الصفيّة، يجب أن تكون الأسئلة المطروحة من النوع:", opts: ["المغلق (نعم/لا)", "المفتوح (لماذا/كيف)", "الذي يطلب التذكر فقط", "غير المرتبط بالدرس"], ans: 1, exp: "الأسئلة المفتوحة تسمح بتعدد وجهات النظر وتبادل الخبرات." },
+            { type: "فهم عميق", q: "ما هو الهدف الرئيسي من مرحلة 'التهكم' في الطريقة السقراطية؟", opts: ["إحراج الطالب أمام زملائه", "إظهار تفوق المعلم العلمي", "دفع الطالب للتخلي عن الجمود الفكري", "تسهيل حفظ المادة"], ans: 2, exp: "إظهار تناقض أفكار الطالب يدفعه للتخلي عن المسلمات القديمة والبدء في البحث الجاد." }
+        ];
+
+        let currQ = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currQ = 0;
+            score = 0;
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-area').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizQuestions[currQ];
+            document.getElementById('q-counter').innerText = `السؤال ${currQ + 1} / ${quizQuestions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerText = q.q;
+            
+            const optsDiv = document.getElementById('q-options');
+            optsDiv.innerHTML = '';
+            
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                // Light mode button styling
+                btn.className = "w-full text-right p-4 rounded-xl border border-slate-200 bg-white hover:border-c_exam hover:bg-slate-50 transition-all text-sm font-bold text-text_main shadow-sm";
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(idx, btnNode) {
+            const q = quizQuestions[currQ];
+            const allBtns = document.getElementById('q-options').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+            
+            if(idx === q.ans) {
+                btnNode.classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                score++;
+                addXP(15, 'إجابة صحيحة!', '#059669');
+            } else {
+                btnNode.classList.add('bg-red-50', 'border-red-400', 'text-red-700');
+                allBtns[q.ans].classList.add('bg-green-50', 'border-green-400', 'text-green-700');
+                addXP(0, 'تعلم من الخطأ', '#64748b');
+            }
+            
+            const expDiv = document.createElement('div');
+            expDiv.className = "mt-4 p-3 bg-blue-50 border-r-4 border-c_exam rounded text-xs text-blue-900 leading-relaxed";
+            expDiv.innerHTML = `<strong class="text-c_exam">التفسير:</strong> ${q.exp}`;
+            document.getElementById('q-options').appendChild(expDiv);
+            
+            setTimeout(() => {
+                currQ++;
+                if(currQ < quizQuestions.length) loadQuestion();
+                else showResults();
+            }, 3500);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-area').classList.add('hidden');
+            const resDiv = document.getElementById('quiz-result');
+            resDiv.classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            
+            let msg = "";
+            if(score === 10) msg = "أداء استثنائي! لقد أتقنت إستراتيجيات التدريس ببراعة. 👑";
+            else if(score >= 7) msg = "أداء ممتاز! استيعابك لمنهجية حل المشكلات قوي جداً. 🧠";
+            else msg = "تحتاج إلى مراجعة الطريقة السقراطية والخطوات العلمية مجدداً! 🔄";
+            
+            document.getElementById('result-msg').innerHTML = `<strong>${msg}</strong>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecallSections();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
